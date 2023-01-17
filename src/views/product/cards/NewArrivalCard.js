@@ -1,20 +1,20 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-const NewArrivalCard = () => {
- 
+const NewArrivalCard = ({ product }) => {
   return (
     <div className="slick-single-layout container-width">
       <div className="axil-product product-style-two has-color-pick">
         <div className="thumbnail">
-          <a href="single-product.html">
+          <Link  to={`/products/${product._id}`}>
             <img
               data-sal="zoom-out"
               data-sal-delay="100"
               data-sal-duration="1500"
-              src="/template_files/assets/images/product/furniture/product-5.png"
+              src={`http://localhost:8000/assets/${product.imagePath}`}
               alt="Product Images"
             />
-          </a>
+          </Link>
           <div className="label-block label-right">
             <div className="product-badget">10% OFF</div>
           </div>
@@ -41,11 +41,11 @@ const NewArrivalCard = () => {
               </ul>
             </div>
             <h5 className="title">
-              <a href="single-product.html">Neue Sofa Chair</a>
+              <Link to={`/products/${product._id}`}>{ product.name}</Link>
             </h5>
             <div className="product-price-variant">
-              <span className="price old-price">$40</span>
-              <span className="price current-price">$30</span>
+              {/* <span className="price old-price">$40</span> */}
+              <span className="price current-price">R{product.price.toFixed(2)}</span>
             </div>
           </div>
           <div className="product-hover-action">

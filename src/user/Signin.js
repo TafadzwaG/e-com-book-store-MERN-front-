@@ -1,7 +1,116 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import Loading from "../components/Loading";
+import { API } from "../config";
+import { authActions } from "../redux-store/auth-store";
 
 const Signin = () => {
+  const [signinValues, setSigninValues] = useState({
+    email: "tafadzwagashirah@gmail.com",
+    password: "Themaster@99",
+    error: "",
+    success: false,
+  });
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [redirectToHome, setRedirectToHome] = useState(false);
+
+  const { email, password, error, success } = signinValues;
+
+  const handleChange = (name) => (event) => {
+    setSigninValues({
+      ...signinValues,
+      error: false,
+      [name]: event.target.value,
+    });
+  };
+
+  useEffect(() => {
+    if (redirectToHome) {
+      navigate("/");
+    } else {
+      return;
+    }
+  }, [redirectToHome]);
+
+  const signin = (user) => {
+    setIsLoading(true);
+    return fetch(`${API}/signin`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    })
+      .then((response) => {
+        setIsLoading(false);
+
+        return response.json();
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        console.log(err);
+      });
+  };
+
+  const onSubmitSignin = (event) => {
+    //Prevent Default of browser
+    event.preventDefault();
+    setSigninValues({ ...signinValues, error: false });
+    signin({ email, password }).then((data) => {
+      if (data.error) {
+        setSigninValues({
+          ...signinValues,
+          error: data.error,
+          success: false,
+        });
+      } else {
+        console.log(data.user.role)
+        dispatch(
+          authActions.setLogin({
+            user: data.user,
+            token: data.token,
+            isAuth: true,
+            role: data.user.role
+          })
+        );
+
+        setRedirectToHome(true);
+        setSigninValues({
+          ...signinValues,
+          name: "",
+          email: "",
+          password: "",
+          error: "",
+          success: true,
+        });
+      }
+    });
+  };
+
+  const showError = () => (
+    <div
+      className="alert alert-danger"
+      style={{ display: error ? "" : "none" }}
+    >
+      {error}
+    </div>
+  );
+
+  const showSuccess = () => (
+    <div
+      className="alert alert-info"
+      style={{ display: success ? "" : "none" }}
+    >
+      User Signin Successful{" "}
+    </div>
+  );
+
   return (
     <div class="axil-signin-area">
       {/* <!-- Start Header --> */}
@@ -41,6 +150,9 @@ const Signin = () => {
             <div className="axil-signin-form">
               <h3 className="title">Sign in to eTrade.</h3>
               <p className="b2 mb--55">Enter your detail below</p>
+
+              {showSuccess()}
+              {showError()}
               <form className="singin-form">
                 <div className="form-group">
                   <label>Email</label>
@@ -48,7 +160,8 @@ const Signin = () => {
                     type="email"
                     className="form-control"
                     name="email"
-                    value="annie@example.com"
+                    onChange={handleChange("email")}
+                    value={email}
                   />
                 </div>
                 <div className="form-group">
@@ -57,19 +170,25 @@ const Signin = () => {
                     type="password"
                     className="form-control"
                     name="password"
-                    value="123456789"
+                    onChange={handleChange("password")}
+                    value={password}
                   />
                 </div>
                 <div className="form-group d-flex align-items-center justify-content-between">
-                  <button
-                    type="submit"
-                    className="axil-btn btn-bg-primary submit-btn"
-                  >
-                    Sign In
-                  </button>
-                  <a href="forgot-password.html" className="forgot-btn">
+                  {!isLoading ? (
+                    <button
+                      type="submit"
+                      className="axil-btn btn-bg-primary submit-btn"
+                      onClick={onSubmitSignin}
+                    >
+                      Sign In
+                    </button>
+                  ) : (
+                    <Loading />
+                  )}
+                  <Link to="/forgot-password" className="forgot-btn">
                     Forget password?
-                  </a>
+                  </Link>
                 </div>
               </form>
             </div>

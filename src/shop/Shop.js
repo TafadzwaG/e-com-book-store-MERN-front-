@@ -1,20 +1,18 @@
 import React, { Fragment, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import BreadcrumbArea from "../components/BreadcrumbArea";
+import { API } from "../config";
 import Layout from "../core/Layout";
+import { productActions } from "../redux-store/products-store";
 import BaseCard from "../views/product/cards/BaseCard";
+import FilterByCategory from "./components/FilterByCategory";
 
 const Shop = () => {
-  const [toggleCat, setToggleCat] = useState(false);
-  const [toggleSi, setToggleSi] = useState(false);
-  const [togglePri, setTogglePri] = useState(false);
+  const [toggleSi, setToggleSi] = useState(true);
+  const [togglePri, setTogglePri] = useState(true);
 
-  const toggleCategories = () => {
-    if (!toggleCat) {
-      setToggleCat(true);
-    } else {
-      setToggleCat(false);
-    }
-  };
+  const dispatch = useDispatch();
 
   const toggleSize = () => {
     if (!toggleSi) {
@@ -32,13 +30,48 @@ const Shop = () => {
     }
   };
 
+  const getProducts = async () => {
+    dispatch(productActions.fetchProducts());
+    const getProductsResponse = await fetch(`${API}/all-products`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const responseData = await getProductsResponse.json();
+    console.log("Prod", responseData.data);
+    return responseData.data;
+  };
+
+  const init = () => {
+    getProducts()
+      .then((data) => {
+        dispatch(
+          productActions.setProducts({
+            products: data,
+          })
+        );
+      })
+      .catch((err) => {
+        dispatch(
+          productActions.failedFetchProducts({
+            error: "Error whilst fetch products",
+          })
+        );
+      });
+  };
+
+  useEffect(() => {
+    init();
+  }, []);
+
+  const products = useSelector((state) => state.product.products);
+
   return (
     <Fragment>
       <Layout>
-        <BreadcrumbArea 
-        location={'Products'}
-        title={'Explore All Products'}
-        />
+        <BreadcrumbArea location={"Products"} title={"Explore All Products"} />
         <div className="axil-shop-area axil-section-gap bg-color-white">
           <div className="container">
             <div className="row">
@@ -49,48 +82,7 @@ const Shop = () => {
                       <i className="fas fa-times"></i>
                     </button>
                   </div>
-                  <div
-                    className={
-                      !toggleCat
-                        ? "toggle-list product-categories active"
-                        : "toggle-list product-categories"
-                    }
-                  >
-                    <h6 className="title" onClick={toggleCategories}>
-                      CATEGORIES
-                    </h6>
-                    <div
-                      className="shop-submenu"
-                      style={{ display: !toggleCat ? "" : "none" }}
-                    >
-                      <ul>
-                        <li className="current-cat">
-                          <a href="#">Sun Care</a>
-                        </li>
-                        <li>
-                          <a href="#">Night Care</a>
-                        </li>
-                        <li>
-                          <a href="#">Treatments</a>
-                        </li>
-                        <li>
-                          <a href="#">Moisturizers</a>
-                        </li>
-                        <li>
-                          <a href="#">Eye Care</a>
-                        </li>
-                        <li>
-                          <a href="#">Masks</a>
-                        </li>
-                        <li>
-                          <a href="#">Featured</a>
-                        </li>
-                        <li>
-                          <a href="#">On Sale</a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
+                  <FilterByCategory />
 
                   <div
                     className={
@@ -201,19 +193,16 @@ const Shop = () => {
                 </div>
                 {/* <!-- End .row --> */}
                 <div className="row row--15">
-                  <BaseCard />
-                  <BaseCard />
-                  <BaseCard />
-                  <BaseCard />
-                  <BaseCard />
-                  <BaseCard />
-                  <BaseCard />
-                  <BaseCard />
-                  <BaseCard />
-                  <BaseCard />
+                  {products &&
+                    products.map((product) => (
+                      <BaseCard key={product._id} product={product} />
+                    ))}
                 </div>
                 <div className="text-center pt--20">
-                  <a href="#" className="axil-btn btn-bg-lighter btn-load-more">
+                  <a
+                    className="axil-btn btn-bg-lighter btn-load-more"
+                    style={{ cursor: "pointer" }}
+                  >
                     Load more
                   </a>
                 </div>

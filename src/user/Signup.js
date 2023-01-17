@@ -1,8 +1,94 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import Loading from "../components/Loading";
 import { API } from "../config";
 
 const Signup = () => {
+  const dispatch = useDispatch();
+
+  const [signupValues, setSignupValues] = useState({
+    name: "",
+    email: "",
+    password: "",
+    error: "",
+    success: false,
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (name) => (event) => {
+    setSignupValues({
+      ...signupValues,
+      error: false,
+      [name]: event.target.value,
+    });
+  };
+
+  const { name, email, password, error, success } = signupValues;
+  const signup = (user) => {
+    setIsLoading(true);
+    return fetch(`${API}/signup`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    })
+      .then((response) => {
+        setIsLoading(false);
+        return response.json();
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        console.log(err);
+      });
+  };
+
+  const onSubmitSignup = (event) => {
+    //Prevent Default of browser
+    event.preventDefault();
+    setSignupValues({ ...signupValues, error: false });
+    signup({ name, email, password }).then((data) => {
+      console.log(data.errors);
+      if (data.errors) {
+        setSignupValues({
+          ...signupValues,
+          error: data.errors[0],
+          success: false,
+        });
+      } else {
+        setSignupValues({
+          ...signupValues,
+          name: "",
+          email: "",
+          password: "",
+          error: "",
+          success: true,
+        });
+      }
+    });
+  };
+
+  const showError = () => (
+    <div
+      className="alert alert-danger"
+      style={{ display: error ? "" : "none" }}
+    >
+      {error}
+    </div>
+  );
+
+  const showSuccess = () => (
+    <div
+      className="alert alert-info"
+      style={{ display: success ? "" : "none" }}
+    >
+      Accout Successfully Created <Link to="/signin" style={{paddingLeft: '10px'}}>Signin</Link>
+    </div>
+  );
+
   return (
     <div class="axil-signin-area">
       {/* <!-- Start Header --> */}
@@ -41,15 +127,20 @@ const Signup = () => {
           <div className="axil-signin-form-wrap">
             <div className="axil-signin-form">
               <h3 className="title">I'm New Here</h3>
+
               <p className="b2 mb--55">Enter your detail below</p>
+              {showSuccess()}
+              {showError()}
               <form className="singin-form">
                 <div className="form-group">
                   <label>User Name</label>
                   <input
                     type="text"
                     className="form-control"
-                    name="username"
-                    value="anniemario"
+                    name="name"
+                    placeholder="Tafadzwa"
+                    onChange={handleChange("name")}
+                    value={name}
                   />
                 </div>
                 <div className="form-group">
@@ -58,7 +149,9 @@ const Signup = () => {
                     type="email"
                     className="form-control"
                     name="email"
-                    value="annie@example.com"
+                    placeholder="example@gmail.com"
+                    onChange={handleChange("email")}
+                    value={email}
                   />
                 </div>
                 <div className="form-group">
@@ -67,16 +160,24 @@ const Signup = () => {
                     type="password"
                     className="form-control"
                     name="password"
-                    value="123456789"
+                    placeholder="************"
+                    onChange={handleChange("password")}
+                    value={password}
                   />
                 </div>
+                {/* {JSON.stringify(signupValues)} */}
                 <div className="form-group">
-                  <button
-                    type="submit"
-                    className="axil-btn btn-bg-primary submit-btn"
-                  >
-                    Create Account
-                  </button>
+                  {!isLoading ? (
+                    <button
+                      type="submit"
+                      className="axil-btn btn-bg-primary submit-btn"
+                      onClick={onSubmitSignup}
+                    >
+                      Create Account
+                    </button>
+                  ) : (
+                    <Loading />
+                  )}
                 </div>
               </form>
             </div>

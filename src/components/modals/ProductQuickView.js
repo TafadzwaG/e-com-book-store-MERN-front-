@@ -1,12 +1,18 @@
 import React, { Fragment } from "react";
 
-const ProductQuickView = () => {
+const ProductQuickView = ({ product }) => {
+
+
+
+  const onChangeHandler = () => {
+    
+  }
   return (
     <Fragment>
       <div
         className="modal fade quick-view-product"
         id="quick-view-modal"
-        tabindex="-1"
+        tabIndex="-1"
         aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered">
@@ -30,7 +36,7 @@ const ProductQuickView = () => {
                         <div className="single-product-thumbnail product-large-thumbnail axil-product thumbnail-badge zoom-gallery">
                           <div className="thumbnail">
                             <img
-                              src="/template_files/assets/images/product/product-big-01.png"
+                               src={`http://localhost:8000/assets/${product.imagePath}`}
                               alt="Product Images"
                             />
                             <div className="label-block label-right">
@@ -38,7 +44,7 @@ const ProductQuickView = () => {
                             </div>
                             <div className="product-quick-view position-view">
                               <a
-                                href="/template_files/assets/images/product/product-big-01.png"
+                                href={`http://localhost:8000/assets/${product.imagePath}`}
                                 className="popup-zoom"
                               >
                                 <i className="far fa-search-plus"></i>
@@ -51,7 +57,7 @@ const ProductQuickView = () => {
                         <div className="product-small-thumb small-thumb-wrapper">
                           <div className="small-thumb-img">
                             <img
-                              src="/template_files/assets/images/product/product-thumb/thumb-08.png"
+                              src={`http://localhost:8000/assets/${product.imagePath}`}
                               alt="thumb image"
                             />
                           </div>
@@ -75,11 +81,11 @@ const ProductQuickView = () => {
                             </a>
                           </div>
                         </div>
-                        <h3 className="product-title">Serif Coffee Table</h3>
-                        <span className="price-amount">$155.00 - $255.00</span>
+                        <h3 className="product-title">{ product.name }</h3>
+                        <span className="price-amount"> R{product.price.toFixed(2)}</span>
                         <ul className="product-meta">
                           <li>
-                            <i className="fal fa-check"></i>In stock
+                            <i className="fal fa-check"></i>In stock ({product.quantity})
                           </li>
                           <li>
                             <i className="fal fa-check"></i>Free delivery
@@ -91,10 +97,7 @@ const ProductQuickView = () => {
                           </li>
                         </ul>
                         <p className="description">
-                          In ornare lorem ut est dapibus, ut tincidunt nisi
-                          pretium. Integer ante est, elementum eget magna.
-                          Pellentesque sagittis dictum libero, eu dignissim
-                          tellus.
+                         { product.description }
                         </p>
 
                         <div className="product-variations-wrapper">
@@ -141,7 +144,9 @@ const ProductQuickView = () => {
                         <div className="product-action-wrapper d-flex-center">
                           {/* <!-- Start Quentity Action  --> */}
                           <div className="pro-qty">
-                            <input type="text" value="1" />
+                            <input type="text" value="1" 
+                            onChange={onChangeHandler}
+                            />
                           </div>
                           {/* <!-- End Quentity Action  --> */}
 

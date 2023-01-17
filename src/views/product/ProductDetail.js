@@ -1,7 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { API } from "../../config";
 import Layout from "../../core/Layout";
 
 const ProductDetail = () => {
+  const params = useParams();
+
+  const productId = params.productId;
+
+  const [product, setProduct] = useState({});
+  const [error, setError] = useState("");
+
+  const getSingleProduct = async (productId) => {
+    const getSingleProductResponse = await fetch(
+      `${API}/product/${productId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const responseData = await getSingleProductResponse.json();
+    console.log("Single", responseData);
+
+    return responseData;
+  };
+
+  const init = () => {
+    getSingleProduct(productId)
+      .then((data) => {
+        setProduct(data);
+      })
+      .catch((err) => {
+        setError(err);
+      });
+  };
+
+  useEffect(() => {
+    init();
+  }, []);
+
   return (
     <>
       <Layout>
@@ -16,11 +57,11 @@ const ProductDetail = () => {
                         <div className="single-product-thumbnail product-large-thumbnail-3 axil-product">
                           <div className="thumbnail">
                             <a
-                              href="/template_files/assets/images/product/product-big-01.png"
+                              href={`http://localhost:8000/assets/${product.imagePath}`}
                               className="popup-zoom"
                             >
                               <img
-                                src="/template_files/assets/images/product/product-big-01.png"
+                                src={`http://localhost:8000/assets/${product.imagePath}`}
                                 alt="Product Images"
                               />
                             </a>
@@ -43,25 +84,7 @@ const ProductDetail = () => {
                       <div className="product-small-thumb-3 small-thumb-wrapper">
                         <div className="small-thumb-img">
                           <img
-                            src="/template_files/assets/images/product/product-thumb/thumb-08.png"
-                            alt="thumb image"
-                          />
-                        </div>
-                        <div className="small-thumb-img">
-                          <img
-                            src="/template_files/assets/images/product/product-thumb/thumb-07.png"
-                            alt="thumb image"
-                          />
-                        </div>
-                        <div className="small-thumb-img">
-                          <img
-                            src="/template_files/assets/images/product/product-thumb/thumb-09.png"
-                            alt="thumb image"
-                          />
-                        </div>
-                        <div className="small-thumb-img">
-                          <img
-                            src="/template_files/assets/images/product/product-thumb/thumb-07.png"
+                            src={`http://localhost:8000/assets/${product.imagePath}`}
                             alt="thumb image"
                           />
                         </div>
@@ -72,14 +95,16 @@ const ProductDetail = () => {
                 <div className="col-lg-5 mb--40">
                   <div className="single-product-content">
                     <div className="inner">
-                      <h2 className="product-title">3D™ wireless headset</h2>
-                      <span className="price-amount">$155.00 - $255.00</span>
+                      <h2 className="product-title">{product.name}</h2>
+                      <span className="price-amount">
+                        R{product.price}
+                      </span>
                       <div className="product-rating">
                         <div className="star-rating">
                           <i className="fas fa-star"></i>
                           <i className="fas fa-star"></i>
                           <i className="fas fa-star"></i>
-                          <i className="fas fa-star"></i>
+                          <i className="far fa-star"></i>
                           <i className="far fa-star"></i>
                         </div>
                         <div className="review-link">
@@ -90,7 +115,8 @@ const ProductDetail = () => {
                       </div>
                       <ul className="product-meta">
                         <li>
-                          <i className="fal fa-check"></i>In stock
+                          <i className="fal fa-check"></i>In stock (
+                          {product.quantity})
                         </li>
                         <li>
                           <i className="fal fa-check"></i>Free delivery
@@ -101,12 +127,7 @@ const ProductDetail = () => {
                           Code: MOTIVE30
                         </li>
                       </ul>
-                      <p className="description">
-                        In ornare lorem ut est dapibus, ut tincidunt nisi
-                        pretium. Integer ante est, elementum eget magna.
-                        Pellentesque sagittis dictum libero, eu dignissim
-                        tellus.
-                      </p>
+                      <p className="description">{product.description}</p>
 
                       <div className="product-variations-wrapper">
                         {/* <!-- Start Product Variation  --> */}
@@ -257,7 +278,7 @@ const ProductDetail = () => {
                           <li className="single-features">
                             <div className="icon">
                               <img
-                                src="assets/images/product/product-thumb/icon-3.png"
+                                src="/template_files/assets/images/product/product-thumb/icon-3.png"
                                 alt="icon"
                               />
                             </div>
@@ -266,7 +287,7 @@ const ProductDetail = () => {
                           <li className="single-features">
                             <div className="icon">
                               <img
-                                src="assets/images/product/product-thumb/icon-2.png"
+                                src="/template_files/assets/images/product/product-thumb/icon-2.png"
                                 alt="icon"
                               />
                             </div>
@@ -275,7 +296,7 @@ const ProductDetail = () => {
                           <li className="single-features">
                             <div className="icon">
                               <img
-                                src="assets/images/product/product-thumb/icon-1.png"
+                                src="/template_files/assets/images/product/product-thumb/icon-1.png"
                                 alt="icon"
                               />
                             </div>

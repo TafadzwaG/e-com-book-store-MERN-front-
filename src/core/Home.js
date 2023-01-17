@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Menu from "./Menu";
 import Layout from "./Layout";
 import Testimonial from "../components/Testimonial";
@@ -15,6 +15,9 @@ import NewArrivalSection from "../sections/NewArrivalSection";
 import WhyUsSection from "../sections/WhyUsSection";
 import PostSection from "../sections/PostSection";
 import AboutUsSection from "../sections/AboutUsSection";
+import CategorySlider from "../components/CategorySlider";
+import { getUserCart } from "../services/api-services";
+import { useSelector } from "react-redux";
 
 const Home = () => {
   var testimonialSettings = {
@@ -24,33 +27,31 @@ const Home = () => {
     slidesToShow: 3,
     slidesToScroll: 3,
     autoplay: true,
-    // centerMode :true,
-    // centerPadding: '30px'
-
   };
+
+  const userId = useSelector((state) => state.auth.user._id);
+  const token = useSelector((state) => state.auth.token);
+
+  const init = () => {
+    getUserCart(userId, token)
+      .then((data) => {
+        console.log("User Cart", data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    init();
+  }, []);
   return (
     <>
       <Layout>
         <main className="main-wrapper">
           {/* <!-- Start Categorie Area  --> */}
-          <div className="axil-categorie-area pt--30 bg-color-white">
-            <div className="container">
-              <div className="categrie-product-activation-2 categorie-product-two slick-layout-wrapper--15">
-                <div className="slick-single-layout slick-slide">
-                  <div className="categrie-product-2">
-                    <a href="#">
-                      <img
-                        className="img-fluid"
-                        src="/template_files/assets/images/product/categories/furni-1.png"
-                        alt="product categorie"
-                      />
-                      <h6 className="cat-title">Sofa</h6>
-                    </a>
-                  </div>
-                  {/* <!-- End .categrie-product --> */}
-                </div>
-              </div>
-            </div>
+          <div className="container">
+            <CategorySlider />
           </div>
           {/* <!-- End Categorie Area  -->
 

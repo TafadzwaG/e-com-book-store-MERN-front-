@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
 import QuickViewModal from "../components/modals/QuickViewModal";
 import SearchModal from "../components/modals/SearchModal";
+import { authActions } from "../redux-store/auth-store";
 
 const isActive = (history, path) => {
   if (history.location.pathname === path) {
@@ -13,14 +15,30 @@ const isActive = (history, path) => {
 
 const Menu = () => {
   const [isOpen, setIsOpen] = useState(false);
-
   const [scroll, setScroll] = useState(false);
+  const isAuthenticated = useSelector((state) => state.auth.isAuth);
+  const dispatch = useDispatch();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const userRole = useSelector((state) => state.auth.role ) ;
+
+  const signOut = () => {
+    dispatch(authActions.setLogout());
+  };
 
   useEffect(() => {
     window.addEventListener("scroll", () => {
       setScroll(window.scrollY > 50);
     });
-  }, []);
+
+    if (userRole === 1) {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+
+   
+  }, [userRole]);
 
   const toggleUserModal = () => {
     if (!isOpen) {
@@ -29,6 +47,13 @@ const Menu = () => {
       setIsOpen(false);
     }
   };
+
+  const onChangeHandler = () => {
+
+  }
+
+
+  const cartQuantity = useSelector((state) => state.cart.cartQuantity)
 
   return (
     <>
@@ -77,15 +102,33 @@ const Menu = () => {
               <div className="col-lg-6 col-sm-6 col-12">
                 <div className="header-top-link">
                   <ul className="quick-link">
-                    <li>
-                      <Link to="/">Help</Link>
-                    </li>
-                    <li>
-                      <Link to="/signup">Join Us</Link>
-                    </li>
-                    <li>
-                      <Link to="/signin">Sign In</Link>
-                    </li>
+                    {isAuthenticated ? (
+                      <Fragment>
+                        {isAdmin ? (
+                          <Fragment>
+                            <li>
+                              <Link to="/dashboard">Dashboard</Link>
+                            </li>
+                            <li>
+                              <a onClick={signOut}>Logout</a>
+                            </li>
+                          </Fragment>
+                        ) : (
+                          <li>
+                            <a onClick={signOut}>Logout</a>
+                          </li>
+                        )}
+                      </Fragment>
+                    ) : (
+                      <Fragment>
+                        <li>
+                          <Link to="/signup">Join Us</Link>
+                        </li>
+                        <li>
+                          <Link to="/signin">Sign In</Link>
+                        </li>
+                      </Fragment>
+                    )}
                   </ul>
                 </div>
               </div>
@@ -98,18 +141,18 @@ const Menu = () => {
           <div className="container">
             <div className="header-navbar">
               <div className="header-brand">
-                <a href="index.html" className="logo logo-dark">
+                <Link to="/" className="logo logo-dark">
                   <img
                     src="/template_files/assets/images/logo/logo.png"
                     alt="Site Logo"
                   />
-                </a>
-                <a href="index.html" className="logo logo-light">
+                </Link>
+                <Link to="/" className="logo logo-light">
                   <img
                     src="/template_files/assets/images/logo/logo-light.png"
                     alt="Site Logo"
                   />
-                </a>
+                </Link>
               </div>
               <div className="header-main-nav">
                 {/* <!-- Start Mainmanu Nav --> */}
@@ -127,24 +170,24 @@ const Menu = () => {
                   </div>
                   <ul className="mainmenu">
                     <li className="">
-                      <NavLink activeClassName="active" to="/">
+                      <NavLink  to="/">
                         Home
                       </NavLink>
                     </li>
                     <li className="">
-                      <NavLink activeClassName="active" to="/shop">
+                      <NavLink  to="/shop">
                         Shop
                       </NavLink>
                     </li>
 
                     <li>
-                      <NavLink activeClassName="active" to="/about">
+                      <NavLink  to="/about">
                         About
                       </NavLink>
                     </li>
 
                     <li>
-                      <NavLink activeClassName="active" to="/contact">
+                      <NavLink  to="/contact">
                         Contact
                       </NavLink>
                     </li>
@@ -161,9 +204,10 @@ const Menu = () => {
                       name="search2"
                       id="search2"
                       value=""
+                      onChange={onChangeHandler}
                       maxLength="128"
                       placeholder="What are you looking for?"
-                      autocomplete="off"
+                      autoComplete="off"
                     />
                     <button type="submit" className="icon wooc-btn-search">
                       <i className="flaticon-magnifying-glass"></i>
@@ -171,7 +215,7 @@ const Menu = () => {
                   </li>
                   <li className="axil-search d-xl-none d-block">
                     <a
-                      href="javascript:void(0)"
+                      href=""
                       className="header-search-icon"
                       title="Search"
                     >
@@ -185,7 +229,7 @@ const Menu = () => {
                   </li>
                   <li className="shopping-cart">
                     <a className="cart-dropdown-btn">
-                      <span className="cart-count">3</span>
+                      <span className="cart-count">{ cartQuantity }</span>
                       <i className="flaticon-shopping-cart"></i>
                     </a>
                   </li>
@@ -202,18 +246,32 @@ const Menu = () => {
                       <span className="title">QUICKLINKS</span>
                       <ul>
                         <li>
-                          <a href="#">My Account</a>
+                          <Link to="/account">My Account</Link>
                         </li>
                       </ul>
-                      <Link to="/signin" className="axil-btn btn-bg-primary">
-                        Login
-                      </Link>
-                      <div className="reg-footer text-center">
-                        No account yet?{" "}
-                        <Link to="/signup" className="btn-link">
-                          REGISTER HERE.
-                        </Link>
-                      </div>
+                      {isAuthenticated ? (
+                        <a
+                          onClick={signOut}
+                          className="axil-btn btn-bg-primary"
+                        >
+                          Logout
+                        </a>
+                      ) : (
+                        <Fragment>
+                          <Link
+                            to="/signin"
+                            className="axil-btn btn-bg-primary"
+                          >
+                            Login
+                          </Link>
+                          <div className="reg-footer text-center">
+                            No account yet?{" "}
+                            <Link to="/signup" className="btn-link">
+                              REGISTER HERE.
+                            </Link>
+                          </div>
+                        </Fragment>
+                      )}
                     </div>
                   </li>
                   <li className="axil-mobile-toggle">
