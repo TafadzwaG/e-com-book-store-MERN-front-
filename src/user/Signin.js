@@ -112,7 +112,7 @@ const Signin = () => {
   );
 
   return (
-    <div class="axil-signin-area">
+    <div className="axil-signin-area">
       {/* <!-- Start Header --> */}
       <div className="signin-header">
         <div className="row align-items-center">

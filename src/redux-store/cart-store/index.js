@@ -4,6 +4,9 @@ const initialState = {
   cartItems: [],
   cartTotal: 0,
   cartQuantity: 0,
+  error: "",
+  success: false,
+  DUMMY_ITEMS: [],
 };
 
 const cartSlice = createSlice({
@@ -25,11 +28,9 @@ const cartSlice = createSlice({
           totalPrice: newItem.price,
           imagePath: newItem.imagePath,
         });
-
-       
       } else {
         existingItem.quantity++;
-        existingItem.totalPrice = existingItem.totalPrice + newItem.price;        
+        existingItem.totalPrice = existingItem.totalPrice + newItem.price;
       }
 
       state.cartTotal = state.cartItems.reduce(
@@ -49,17 +50,32 @@ const cartSlice = createSlice({
         existingItem.totalPrice = existingItem.totalPrice - existingItem.price;
       }
 
-
       state.cartTotal = state.cartItems.reduce(
         (total, item) => total + item.totalPrice,
         0
       );
     },
+
+    setCartFromApi: (state, action) => {
+      const cart = action.payload;
+      state.cartTotal = cart.bill;
+      state.cartQuantity = cart.products.length;
+      state.cartItems = cart.products;
+    },
+
+    setCartFailed: (state, action) => {},
+
+    clearCartState: (state, action) => {
+      (state.cartItems = []),
+        (state.cartTotal = 0),
+        (state.cartQuantity = 0),
+        (state.error = ""),
+        (state.success = false),
+        (state.DUMMY_ITEMS = []);
+        localStorage.clear()
+    },
   },
 });
-
-
-
 
 export const cartActions = cartSlice.actions;
 

@@ -5,12 +5,25 @@ import BreadcrumbArea from "../components/BreadcrumbArea";
 import { API } from "../config";
 import Layout from "../core/Layout";
 import { productActions } from "../redux-store/products-store";
+import { getFiltereredProducts } from "../services/api-services";
 import BaseCard from "../views/product/cards/BaseCard";
 import FilterByCategory from "./components/FilterByCategory";
+import RadioBox from "./components/RadioBox";
+import { prices } from "./FixedPrices";
 
 const Shop = () => {
   const [toggleSi, setToggleSi] = useState(true);
   const [togglePri, setTogglePri] = useState(true);
+  const [myFilters, setMyFilters] = useState({
+    filters: {
+      category: [],
+      price: [],
+    },
+  });
+
+  const [limit, setLimit] = useState(2);
+  const [skip, setSkip] = useState(0);
+  const [size, setSize] = useState(0);
 
   const dispatch = useDispatch();
 
@@ -30,43 +43,84 @@ const Shop = () => {
     }
   };
 
-  const getProducts = async () => {
-    dispatch(productActions.fetchProducts());
-    const getProductsResponse = await fetch(`${API}/all-products`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+  const init = () => {};
 
-    const responseData = await getProductsResponse.json();
-    console.log("Prod", responseData.data);
-    return responseData.data;
+  useEffect(() => {
+    init();
+    loadFilteredResults(skip, limit, myFilters.filters);
+  }, []);
+
+  const handleFilters = (filters, filterBy) => {
+    const newFilters = { ...myFilters };
+    newFilters.filters[filterBy] = filters;
+
+    if (filterBy == "price") {
+      let priceValues = handlePrice(filters);
+      newFilters.filters[filterBy] = priceValues;
+    }
+
+    loadFilteredResults(myFilters.filters);
+    setMyFilters(newFilters);
   };
 
-  const init = () => {
-    getProducts()
+  const handlePrice = (value) => {
+    const data = prices;
+    let array = [];
+    for (let key in data) {
+      if (data[key]._id === parseInt(value)) {
+        array = data[key].array;
+      }
+    }
+
+    return array;
+  };
+
+  const products = useSelector((state) => state.product.products);
+
+  const loadFilteredResults = (newFilters) => {
+    getFiltereredProducts(skip, limit, newFilters)
       .then((data) => {
+        console.log("Filtwerd Rezo", data.data);
+        setSize(data.size);
+        setSkip(0);
         dispatch(
           productActions.setProducts({
-            products: data,
+            products: data.data,
           })
         );
       })
       .catch((err) => {
+        console.log(err);
         dispatch(
           productActions.failedFetchProducts({
-            error: "Error whilst fetch products",
+            error: "Error whilst fetch products" || err,
           })
         );
       });
   };
+  const loadMore = (newFilters) => {
+    let toSkip = skip + limit;
 
-  useEffect(() => {
-    init();
-  }, []);
+    getFiltereredProducts(toSkip, limit, myFilters.filters)
+      .then((data) => {
+        dispatch(
+          productActions.setProducts({
+            products: [...products, ...data.data],
+          })
+        );
 
-  const products = useSelector((state) => state.product.products);
+        setSize(data.size);
+        setSkip(toSkip);
+      })
+      .catch((err) => {
+        console.log(err);
+        dispatch(
+          productActions.failedFetchProducts({
+            error: "Error whilst fetch products" || err,
+          })
+        );
+      });
+  };
 
   return (
     <Fragment>
@@ -82,7 +136,11 @@ const Shop = () => {
                       <i className="fas fa-times"></i>
                     </button>
                   </div>
-                  <FilterByCategory />
+                  <FilterByCategory
+                    handleFilters={(filters) =>
+                      handleFilters(filters, "category")
+                    }
+                  />
 
                   <div
                     className={
@@ -140,26 +198,12 @@ const Shop = () => {
                       className="shop-submenu"
                       style={{ display: !togglePri ? "" : "none" }}
                     >
-                      <ul>
-                        <li className="chosen">
-                          <a href="#">30</a>
-                        </li>
-                        <li>
-                          <a href="#">5000</a>
-                        </li>
-                      </ul>
-                      <form action="#" className="mt--25">
-                        <div id="slider-range"></div>
-                        <div className="flex-center mt--20">
-                          <span className="input-range">Price: </span>
-                          <input
-                            type="text"
-                            id="amount"
-                            className="amount-range"
-                            readonly
-                          />
-                        </div>
-                      </form>
+                      <RadioBox
+                        prices={prices}
+                        handleFilters={(filters) =>
+                          handleFilters(filters, "price")
+                        }
+                      />
                     </div>
                   </div>
                   <button className="axil-btn btn-bg-primary">All Reset</button>
@@ -193,18 +237,23 @@ const Shop = () => {
                 </div>
                 {/* <!-- End .row --> */}
                 <div className="row row--15">
+                  {/* {JSON.stringify(myFilters)} */}
                   {products &&
                     products.map((product) => (
                       <BaseCard key={product._id} product={product} />
                     ))}
                 </div>
                 <div className="text-center pt--20">
-                  <a
-                    className="axil-btn btn-bg-lighter btn-load-more"
-                    style={{ cursor: "pointer" }}
-                  >
-                    Load more
-                  </a>
+                  {" "}
+                  {size > 0 && size >= limit && (
+                    <a
+                      className="axil-btn btn-bg-lighter btn-load-more"
+                      style={{ cursor: "pointer" }}
+                      onClick={loadMore}
+                    >
+                      Load more
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

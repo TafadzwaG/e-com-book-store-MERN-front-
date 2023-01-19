@@ -17,7 +17,8 @@ import PostSection from "../sections/PostSection";
 import AboutUsSection from "../sections/AboutUsSection";
 import CategorySlider from "../components/CategorySlider";
 import { getUserCart } from "../services/api-services";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { cartActions } from "../redux-store/cart-store";
 
 const Home = () => {
   var testimonialSettings = {
@@ -32,10 +33,14 @@ const Home = () => {
   const userId = useSelector((state) => state.auth.user._id);
   const token = useSelector((state) => state.auth.token);
 
+  const dispatch = useDispatch();
+
   const init = () => {
     getUserCart(userId, token)
       .then((data) => {
         console.log("User Cart", data);
+
+        dispatch(cartActions.setCartFromApi(data));
       })
       .catch((err) => {
         console.log(err);

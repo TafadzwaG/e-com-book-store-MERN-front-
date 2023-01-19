@@ -30,7 +30,7 @@ const CartItem = ({ item }) => {
           </div>
         </td>
         <td className="product-subtotal" data-title="Subtotal">
-          <span className="currency-symbol">R</span>{item.totalPrice}
+          <span className="currency-symbol">R</span>{item.price * item.quantity}
         </td>
       </tr>
     </Fragment>

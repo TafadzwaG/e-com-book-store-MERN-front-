@@ -45,6 +45,25 @@ export const removeCartItem = async (productId, userId, token) => {
     }
   );
 
-  const responseData = await deletedCartItemResponse.json()
-  return responseData
+  const responseData = await deletedCartItemResponse.json();
+  return responseData;
+};
+
+export const getFiltereredProducts = async (skip, limit, filters = {}) => {
+  const data = {
+    limit,
+    skip,
+    filters,
+  };
+  const filteredProductsResponse = await fetch(`${API}/products/by/search`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  const responseData = await filteredProductsResponse.json();
+  return responseData;
 };

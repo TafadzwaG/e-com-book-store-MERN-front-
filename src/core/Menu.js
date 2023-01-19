@@ -1,9 +1,10 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import QuickViewModal from "../components/modals/QuickViewModal";
 import SearchModal from "../components/modals/SearchModal";
 import { authActions } from "../redux-store/auth-store";
+import { cartActions } from "../redux-store/cart-store";
 
 const isActive = (history, path) => {
   if (history.location.pathname === path) {
@@ -20,10 +21,14 @@ const Menu = () => {
   const dispatch = useDispatch();
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const userRole = useSelector((state) => state.auth.role ) ;
+  const userRole = useSelector((state) => state.auth.role);
+
+  const navigate = useNavigate();
 
   const signOut = () => {
     dispatch(authActions.setLogout());
+    dispatch(cartActions.clearCartState());
+    navigate("/signin");
   };
 
   useEffect(() => {
@@ -36,8 +41,6 @@ const Menu = () => {
     } else {
       setIsAdmin(false);
     }
-
-   
   }, [userRole]);
 
   const toggleUserModal = () => {
@@ -48,12 +51,9 @@ const Menu = () => {
     }
   };
 
-  const onChangeHandler = () => {
+  const onChangeHandler = () => {};
 
-  }
-
-
-  const cartQuantity = useSelector((state) => state.cart.cartQuantity)
+  const cartQuantity = useSelector((state) => state.cart.cartQuantity);
 
   return (
     <>
@@ -110,7 +110,12 @@ const Menu = () => {
                               <Link to="/dashboard">Dashboard</Link>
                             </li>
                             <li>
-                              <a onClick={signOut}>Logout</a>
+                              <a
+                                style={{ cursor: "pointer" }}
+                                onClick={signOut}
+                              >
+                                Logout
+                              </a>
                             </li>
                           </Fragment>
                         ) : (
@@ -170,26 +175,18 @@ const Menu = () => {
                   </div>
                   <ul className="mainmenu">
                     <li className="">
-                      <NavLink  to="/">
-                        Home
-                      </NavLink>
+                      <NavLink to="/">Home</NavLink>
                     </li>
                     <li className="">
-                      <NavLink  to="/shop">
-                        Shop
-                      </NavLink>
+                      <NavLink to="/shop">Shop</NavLink>
                     </li>
 
                     <li>
-                      <NavLink  to="/about">
-                        About
-                      </NavLink>
+                      <NavLink to="/about">About</NavLink>
                     </li>
 
                     <li>
-                      <NavLink  to="/contact">
-                        Contact
-                      </NavLink>
+                      <NavLink to="/contact">Contact</NavLink>
                     </li>
                   </ul>
                 </nav>
@@ -214,11 +211,7 @@ const Menu = () => {
                     </button>
                   </li>
                   <li className="axil-search d-xl-none d-block">
-                    <a
-                      href=""
-                      className="header-search-icon"
-                      title="Search"
-                    >
+                    <a href="" className="header-search-icon" title="Search">
                       <i className="flaticon-magnifying-glass"></i>
                     </a>
                   </li>
@@ -229,7 +222,7 @@ const Menu = () => {
                   </li>
                   <li className="shopping-cart">
                     <a className="cart-dropdown-btn">
-                      <span className="cart-count">{ cartQuantity }</span>
+                      <span className="cart-count">{cartQuantity}</span>
                       <i className="flaticon-shopping-cart"></i>
                     </a>
                   </li>
@@ -253,6 +246,7 @@ const Menu = () => {
                         <a
                           onClick={signOut}
                           className="axil-btn btn-bg-primary"
+                          style={{ cursor: "pointer" }}
                         >
                           Logout
                         </a>
