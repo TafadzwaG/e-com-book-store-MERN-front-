@@ -27,6 +27,7 @@ const Dashboard = () => {
   const { _id, name, email, createdAt } = adminUser;
   const [create, setCreate] = useState(false);
   const [adverts, setAdverts] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const handleCreate = () => {
     if (!create) {
@@ -50,8 +51,28 @@ const Dashboard = () => {
     setAdverts(responseData.data);
   };
 
+  const getCategories = async () => {
+    const getProductsResponse = await fetch(`${API}/categories`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const responseData = await getProductsResponse.json();
+    return responseData.data;
+  };
+
+
+
   useEffect(() => {
     getAdverts();
+    getCategories()
+      .then((data) => {
+        setCategories(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   return (
@@ -60,7 +81,7 @@ const Dashboard = () => {
         <BreadcrumbArea location={"Dashboard"} title={"Admin Dashboard"} />
         <div className="axil-dashboard-area axil-section-gap">
           <div className="container">
-            <div className="axil-dashboard-warp">
+            <div className="axil-dashboard-warp"> 
               <div className="axil-dashboard-author">
                 <div className="media">
                   <div className="thumbnail">
@@ -82,7 +103,7 @@ const Dashboard = () => {
                     <DashboardTabContainer />
                     <UsersTabContainer />
                     <ProductsTabContainer />
-                    <CategoriesTabContainer />
+                    <CategoriesTabContainer categories={categories} />
                     <TestimonialTabContainer />
                     <AdvertTabContainer />
                     <ContactsTabContainer />

@@ -67,3 +67,28 @@ export const getFiltereredProducts = async (skip, limit, filters = {}) => {
   const responseData = await filteredProductsResponse.json();
   return responseData;
 };
+
+export const getCategories = async () => {
+  const getCategoriesResponse = await fetch(`${API}/categories`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const responseData = await getCategoriesResponse.json();
+  return responseData.data;
+};
+
+export const list = async (params) => {
+  const query = queryString.stringify(params);
+  const getSearchData = await fetch(`${API}/products/search?${query}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const responseData = await getSearchData.json();
+  return responseData;
+};

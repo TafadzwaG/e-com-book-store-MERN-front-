@@ -65,8 +65,8 @@ const ProductsTabContainer = () => {
               <tbody>
                 {products &&
                   products.map((product) => (
-                    <Fragment>
-                      <tr>
+                    <Fragment key={product._id}>
+                      <tr >
                         <th>{product.name}</th>
                         <td>{product.description}</td>
                         <td>{product.price.toFixed(2)}</td>

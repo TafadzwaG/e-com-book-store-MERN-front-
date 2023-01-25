@@ -78,9 +78,9 @@ const Shop = () => {
   const products = useSelector((state) => state.product.products);
 
   const loadFilteredResults = (newFilters) => {
-    getFiltereredProducts(skip, limit, newFilters)
+    getFiltereredProducts(skip, limit , newFilters)
       .then((data) => {
-        console.log("Filtwerd Rezo", data.data);
+        console.log("Filtered Rezo", data.data);
         setSize(data.size);
         setSkip(0);
         dispatch(

@@ -2708,7 +2708,7 @@ button.axil-btn.wishlist-btn:hover:before {
   }
 }
 .slick-layout-wrapper--20 .slick-single-layout {
-    width: 444px;
+  width: 444px;
   padding: 20px;
 }
 @media only screen and (max-width: 575px) {
@@ -16692,13 +16692,39 @@ body.open .closeMask {
 }
 /*# sourceMappingURL=../maps/style.min.css.map */
 
-
-.container-width{
+.container-width {
   width: 338px;
 }
 
-.activato{
+.activato {
   border: 1px solid red;
 }
 
+.pagination {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5rem;
+  font-size: 1.2rem;
+  gap: 5px;
+}
 
+.pagination .page-num {
+  padding: 8px 15px;
+  cursor: pointer;
+  border-radius: 7px;
+  font-weight: 600;
+}
+
+.pagination .page-num:hover {
+  background-color: #3577f0;
+  color: #fff;
+}
+
+.pagination .active {
+  background-color: #3577f0;
+}
+.table-responsive{
+  min-height: 510px !important;
+}
