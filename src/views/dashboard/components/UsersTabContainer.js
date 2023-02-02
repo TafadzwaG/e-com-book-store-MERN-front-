@@ -17,22 +17,22 @@ const UsersTabContainer = () => {
     }
   };
 
-  const getUsers = async () => {
-    const getUsersResponse = await fetch(`${API}/users`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+  // const getUsers = async () => {
+  //   const getUsersResponse = await fetch(`${API}/users`, {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   });
 
-    const responseData = await getUsersResponse.json();
+  //   const responseData = await getUsersResponse.json();
 
-    console.log("Users", responseData.data);
-    setUsers(responseData.data);
-  };
+  //   console.log("Users", responseData.data);
+  //   setUsers(responseData.data);
+  // };
 
   useEffect(() => {
-    getUsers();
+    // getUsers();
   }, []);
 
   return (

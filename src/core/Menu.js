@@ -53,7 +53,7 @@ const Menu = () => {
 
   const onChangeHandler = () => {};
 
-  const cartQuantity = useSelector((state) => state.cart.cartQuantity);
+  const cartQuantity = useSelector((state) => state.cart.cartQuantity) || 0;
 
   return (
     <>

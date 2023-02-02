@@ -1,13 +1,15 @@
 import React, { Fragment } from "react";
+import { Link } from "react-router-dom";
 
-const SearchItemCard = () => {
+const SearchItemCard = ({ product }) => {
   return (
     <Fragment>
       <div className="axil-product-list">
         <div className="thumbnail">
           <a href="single-product.html">
             <img
-              src="/template_files/assets/images/product/electric/product-09.png"
+              style={{ width: "150px" }}
+              src={`http://localhost:8000/assets/${product.imagePath}`}
               alt="Yantiti Leather Bags"
             />
           </a>
@@ -26,17 +28,20 @@ const SearchItemCard = () => {
             </span>
           </div>
           <h6 className="product-title">
-            <a href="single-product.html">Media Remote</a>
+            <Link to={`/products/${product._id}`}>{product.name}</Link>
           </h6>
           <div className="product-price-variant">
-            <span className="price current-price">$29.99</span>
-            <span className="price old-price">$49.99</span>
+            <span className="price current-price">
+              {" "}
+              R{product.price.toFixed(2)}
+            </span>
+            {/* <span className="price old-price">$49.99</span> */}
           </div>
           <div className="product-cart">
-            <a href="cart.html" className="cart-btn">
+            <a className="cart-btn">
               <i className="fal fa-shopping-cart"></i>
             </a>
-            <a href="wishlist.html" className="cart-btn">
+            <a className="cart-btn">
               <i className="fal fa-heart"></i>
             </a>
           </div>

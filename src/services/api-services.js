@@ -1,4 +1,5 @@
 import { API } from "../config";
+import queryString from "query-string";
 
 export const addToCart = async (productId, quantity, userId, token) => {
   const addToCartResponse = await fetch(`${API}/cart/${userId}`, {
@@ -83,12 +84,15 @@ export const getCategories = async () => {
 export const list = async (params) => {
   const query = queryString.stringify(params);
   const getSearchData = await fetch(`${API}/products/search?${query}`, {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
   });
 
   const responseData = await getSearchData.json();
-  return responseData;
+  console.log("From Search", responseData.products)
+  return responseData.products;
 };
+
+

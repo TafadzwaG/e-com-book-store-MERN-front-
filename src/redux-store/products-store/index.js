@@ -7,6 +7,7 @@ const initialState = {
   bestSellers: [],
   newArrivals: [],
   randomProducts: [],
+  isCommented: false
 };
 
 const productSlice = createSlice({
@@ -46,6 +47,10 @@ const productSlice = createSlice({
       state.randomProducts = action.payload.randomProducts
       state.isLoading = false;
       state.error = "";
+    },
+
+    setIsComented: (state, action) => {
+      state.isCommented = action.payload
     }
   },
 });

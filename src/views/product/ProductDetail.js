@@ -1,16 +1,24 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { API } from "../../config";
 import Layout from "../../core/Layout";
+import Rating from "./components/Rating";
+import Review from "./components/Review";
+import SellFeatures from "./components/SellFeatures";
+import UserReview from "./components/UserReview";
+import RelatedProducts from "./RelatedProducts";
+import { productActions } from "../../redux-store/products-store";
 
 const ProductDetail = () => {
   const params = useParams();
-
   const productId = params.productId;
-
   const [product, setProduct] = useState({});
   const [error, setError] = useState("");
+  const isComment = useSelector((state) => state.product.isCommented);
+
+  const dispatch = useDispatch();
 
   const getSingleProduct = async (productId) => {
     const getSingleProductResponse = await fetch(
@@ -41,7 +49,8 @@ const ProductDetail = () => {
 
   useEffect(() => {
     init();
-  }, []);
+    dispatch(productActions.setIsComented(false));
+  }, [productId, isComment]);
 
   return (
     <>
@@ -96,23 +105,23 @@ const ProductDetail = () => {
                   <div className="single-product-content">
                     <div className="inner">
                       <h2 className="product-title">{product.name}</h2>
-                      <span className="price-amount">
-                        R{product.price}
-                      </span>
+                      <span className="price-amount">R{product.price}</span>
                       <div className="product-rating">
-                        <div className="star-rating">
-                          <i className="fas fa-star"></i>
-                          <i className="fas fa-star"></i>
-                          <i className="fas fa-star"></i>
-                          <i className="far fa-star"></i>
-                          <i className="far fa-star"></i>
-                        </div>
                         <div className="review-link">
-                          <a href="#">
-                            (<span>2</span> customer reviews)
-                          </a>
+                          <Rating rating={product.rating} numReviews={2} />
+                          {product.comments ? (
+                            <a href="#">
+                              (<span>{product.comments.length}</span> customer
+                              reviews)
+                            </a>
+                          ) : (
+                            <a href="#">
+                              (<span>No Comments Available</span>)
+                            </a>
+                          )}
                         </div>
                       </div>
+
                       <ul className="product-meta">
                         <li>
                           <i className="fal fa-check"></i>In stock (
@@ -272,40 +281,7 @@ const ProductDetail = () => {
                       {/* <!-- End .col-lg-6 --> */}
                     </div>
                     {/* <!-- End .row --> */}
-                    <div className="row">
-                      <div className="col-lg-12">
-                        <ul className="pro-des-features">
-                          <li className="single-features">
-                            <div className="icon">
-                              <img
-                                src="/template_files/assets/images/product/product-thumb/icon-3.png"
-                                alt="icon"
-                              />
-                            </div>
-                            Easy Returns
-                          </li>
-                          <li className="single-features">
-                            <div className="icon">
-                              <img
-                                src="/template_files/assets/images/product/product-thumb/icon-2.png"
-                                alt="icon"
-                              />
-                            </div>
-                            Quality Service
-                          </li>
-                          <li className="single-features">
-                            <div className="icon">
-                              <img
-                                src="/template_files/assets/images/product/product-thumb/icon-1.png"
-                                alt="icon"
-                              />
-                            </div>
-                            Original Product
-                          </li>
-                        </ul>
-                        {/* <!-- End .pro-des-features --> */}
-                      </div>
-                    </div>
+                    <SellFeatures />
                     {/* <!-- End .row --> */}
                   </div>
                   {/* <!-- End .product-desc-wrapper --> */}
@@ -321,60 +297,19 @@ const ProductDetail = () => {
                     <div className="row">
                       <div className="col-lg-6 mb--40">
                         <div className="axil-comment-area pro-desc-commnet-area">
-                          <h5 className="title">01 Review for this product</h5>
+                          {product.comments ? (
+                            <h5 className="title">
+                              {product.comments.length} Reviews for this product
+                            </h5>
+                          ) : (
+                            <h5 className="title">
+                              No Reviews for this product yet
+                            </h5>
+                          )}
+
                           <ul className="comment-list">
                             {/* <!-- Start Single Comment  --> */}
-                            <li className="comment">
-                              <div className="comment-body">
-                                <div className="single-comment">
-                                  <div className="comment-img">
-                                    <img
-                                      src="/template_files/assets/images/blog/author-image-4.png"
-                                      alt="Author Images"
-                                    />
-                                  </div>
-                                  <div className="comment-inner">
-                                    <h6 className="commenter">
-                                      <a
-                                        className="hover-flip-item-wrapper"
-                                        href="#"
-                                      >
-                                        <span className="hover-flip-item">
-                                          <span data-text="Cameron Williamson">
-                                            Eleanor Pena
-                                          </span>
-                                        </span>
-                                      </a>
-                                      <span className="commenter-rating ratiing-four-star">
-                                        <a href="#">
-                                          <i className="fas fa-star"></i>
-                                        </a>
-                                        <a href="#">
-                                          <i className="fas fa-star"></i>
-                                        </a>
-                                        <a href="#">
-                                          <i className="fas fa-star"></i>
-                                        </a>
-                                        <a href="#">
-                                          <i className="fas fa-star"></i>
-                                        </a>
-                                        <a href="#">
-                                          <i className="fas fa-star empty-rating"></i>
-                                        </a>
-                                      </span>
-                                    </h6>
-                                    <div className="comment-text">
-                                      <p>
-                                        “We’ve created a full-stack structure
-                                        for our working workflow processes, were
-                                        from the funny the century initial all
-                                        the made, have spare to negatives. ”{" "}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </li>
+                            <UserReview productId={productId} />
                             {/* <!-- End Single Comment  --> */}
                           </ul>
                         </div>
@@ -383,74 +318,7 @@ const ProductDetail = () => {
                       {/* <!-- End .col --> */}
                       <div className="col-lg-6 mb--40">
                         {/* <!-- Start Comment Respond  --> */}
-                        <div className="comment-respond pro-des-commend-respond mt--0">
-                          <h5 className="title mb--30">Add a Review</h5>
-                          <p>
-                            Your email address will not be published. Required
-                            fields are marked *
-                          </p>
-                          <div className="rating-wrapper d-flex-center mb--40">
-                            Your Rating <span className="require">*</span>
-                            <div className="reating-inner ml--20">
-                              <a href="#">
-                                <i className="fal fa-star"></i>
-                              </a>
-                              <a href="#">
-                                <i className="fal fa-star"></i>
-                              </a>
-                              <a href="#">
-                                <i className="fal fa-star"></i>
-                              </a>
-                              <a href="#">
-                                <i className="fal fa-star"></i>
-                              </a>
-                              <a href="#">
-                                <i className="fal fa-star"></i>
-                              </a>
-                            </div>
-                          </div>
-
-                          <form action="#">
-                            <div className="row">
-                              <div className="col-12">
-                                <div className="form-group">
-                                  <label>Other Notes (optional)</label>
-                                  <textarea
-                                    name="message"
-                                    placeholder="Your Comment"
-                                  ></textarea>
-                                </div>
-                              </div>
-                              <div className="col-lg-6 col-md-6 col-12">
-                                <div className="form-group">
-                                  <label>
-                                    Name <span className="require">*</span>
-                                  </label>
-                                  <input id="name" type="text" />
-                                </div>
-                              </div>
-                              <div className="col-lg-6 col-md-6 col-12">
-                                <div className="form-group">
-                                  <label>
-                                    Email <span className="require">*</span>{" "}
-                                  </label>
-                                  <input id="email" type="email" />
-                                </div>
-                              </div>
-                              <div className="col-lg-12">
-                                <div className="form-submit">
-                                  <button
-                                    type="submit"
-                                    id="submit"
-                                    className="axil-btn btn-bg-primary w-auto"
-                                  >
-                                    Submit Comment
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </form>
-                        </div>
+                        <Review productIdProp={productId} />
                         {/* <!-- End Comment Respond  --> */}
                       </div>
                       {/* <!-- End .col --> */}
@@ -462,6 +330,7 @@ const ProductDetail = () => {
           </div>
           {/* <!-- woocommerce-tabs --> */}
         </div>
+        <RelatedProducts productId={productId} />
       </Layout>
     </>
   );

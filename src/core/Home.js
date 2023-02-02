@@ -30,7 +30,7 @@ const Home = () => {
     autoplay: true,
   };
 
-  const userId = useSelector((state) => state.auth.user._id);
+  const userId = useSelector((state) => state.auth.userId);
   const token = useSelector((state) => state.auth.token);
 
   const dispatch = useDispatch();
@@ -48,7 +48,9 @@ const Home = () => {
   };
 
   useEffect(() => {
-    init();
+    if (token !== null) {
+      init();
+    }
   }, []);
   return (
     <>

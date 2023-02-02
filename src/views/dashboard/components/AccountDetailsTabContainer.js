@@ -14,6 +14,11 @@ const AccountDetailsTabContainer = () => {
     }
   };
 
+
+  const onChangeHandler = () => {
+
+  }
+
   useEffect(() => {}, []);
   return (
     <Fragment>
@@ -25,19 +30,25 @@ const AccountDetailsTabContainer = () => {
                 <div className="col-lg-6">
                   <div className="form-group">
                     <label>First Name</label>
-                    <input type="text" className="form-control" value="Annie" />
+                    <input type="text" className="form-control" value="Annie" 
+                   onChange={onChangeHandler}
+                    />
                   </div>
                 </div>
                 <div className="col-lg-6">
                   <div className="form-group">
                     <label>Last Name</label>
-                    <input type="text" className="form-control" value="Mario" />
+                    <input type="text" className="form-control" value="Mario" 
+                      onChange={onChangeHandler}
+                    />
                   </div>
                 </div>
                 <div className="col-12">
                   <div className="form-group mb--40">
                     <label>Country/ Region</label>
-                    <select className="select2">
+                    <select className="select2" 
+                      onChange={onChangeHandler}
+                    >
                       <option value="1">United Kindom (UK)</option>
                       <option value="1">United States (USA)</option>
                       <option value="1">United Arab Emirates (UAE)</option>
@@ -57,15 +68,20 @@ const AccountDetailsTabContainer = () => {
                       type="password"
                       className="form-control"
                       value="123456789101112131415"
+                      onChange={onChangeHandler}
                     />
                   </div>
                   <div className="form-group">
                     <label>New Password</label>
-                    <input type="password" className="form-control" />
+                    <input type="password" className="form-control"
+                      onChange={onChangeHandler}
+                    />
                   </div>
                   <div className="form-group">
                     <label>Confirm New Password</label>
-                    <input type="password" className="form-control" />
+                    <input type="password" className="form-control"
+                      onChange={onChangeHandler}
+                    />
                   </div>
                   <div className="form-group mb--0">
                     <input

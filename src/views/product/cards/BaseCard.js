@@ -8,7 +8,7 @@ import { addToCart } from "../../../services/api-services";
 const BaseCard = ({ product }) => {
   const dispatch = useDispatch();
 
-  const userId = useSelector((state) => state.auth.user._id);
+  const userId = useSelector((state) => state.auth.userId);
   const token = useSelector((state) => state.auth.token);
 
   const addToCartHandler = () => {
@@ -22,13 +22,15 @@ const BaseCard = ({ product }) => {
     );
 
     //Add to Cart on API
-    addToCart(product._id, 1, userId, token)
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (token !== null) {
+      addToCart(product._id, 1, userId, token)
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   return (

@@ -5,9 +5,7 @@ import { API } from "../../../config";
 import { useSelector } from "react-redux";
 import Loading from "../../../components/Loading";
 
-
-
-const CategoryForm = () => {
+const CategoryForm = ({ isEdit, itemId }) => {
   const userId = useSelector((state) => state.auth.user._id);
   const token = useSelector((state) => state.auth.token);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,6 +32,10 @@ const CategoryForm = () => {
   } = values;
   useEffect(() => {
     setValues({ ...values, formData: new FormData() });
+
+    if (isEdit) {
+      getCategory();
+    }
   }, []);
 
   const addCategory = async (userId, token, category) => {
@@ -53,9 +55,34 @@ const CategoryForm = () => {
       });
   };
 
+  const getCategory = async () => {
+    return await fetch(`${API}/category/${itemId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((resp) => {
+        return resp.json();
+      })
+      .then((data) => {
+        setValues({
+          name: data.name,
+          description: data.description,
+          image: data.imagePath,
+          imagePath: data.imagePath,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const handleChange = (name) => (event) => {
     const value = name === "image" ? event.target.files[0] : event.target.value;
-    formData.set(name, value);
+    if (!isEdit) {
+      formData.set(name, value);
+    }
     setValues({ ...values, [name]: value });
   };
 
@@ -76,7 +103,7 @@ const CategoryForm = () => {
         setIsLoading(false);
       } else {
         setIsLoading(false);
-        setSuccess(true)
+        setSuccess(true);
         setValues({
           ...values,
           name: "",
@@ -89,20 +116,81 @@ const CategoryForm = () => {
     });
   };
 
+  const handleFormEdit = (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    const formData = new FormData();
+    formData.set("name", name);
+    formData.set("description", description);
+    if (image) {
+      formData.set("image", image);
+      formData.set("imagePath", image.name);
+    }
+
+
+    setValues({ ...values, error: "" });
+    editCategory(userId, token, formData).then((data) => {
+      if (data.error || data.errors) {
+        setValues({ ...values, error: data.error });
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+        setSuccess(true);
+        setValues({
+          ...values,
+          name: "",
+          description: "",
+          image: "",
+          imagePath: "",
+        });
+      }
+    });
+  };
+
+  const editCategory = async (userId, token, editValue) => {
+    console.log("Edit Attributes", editValue);
+    return await fetch(`${API}/category/${itemId}/${userId}`, {
+      method: "PUT",
+      headers: {
+        Accept: "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+      body: editValue,
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const showSuccess = () => (
     <div
       className="alert alert-info"
-      style={{ display: success ? "" : "none", width: "200px" }}
+      style={{ display: success ? "" : "none", width: "400px" }}
     >
       New Category Added
+    </div>
+  );
+  const showUpdateSuccess = () => (
+    <div
+      className="alert alert-info"
+      style={{ display: success ? "" : "none", width: "400px" }}
+    >
+      Category Updated
     </div>
   );
 
   return (
     <Fragment>
       <div className="axil-dashboard-account">
-        {showSuccess()}
-        <form className="account-details-form" onSubmit={handleFormSubmit}>
+        {!isEdit ? showSuccess() : showUpdateSuccess()}
+
+        <form
+          className="account-details-form"
+          onSubmit={!isEdit ? handleFormSubmit : handleFormEdit}
+        >
           <div className="row">
             <div className="col-lg-6">
               <div className="form-group">

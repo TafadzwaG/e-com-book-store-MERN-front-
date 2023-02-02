@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 
 import Loading from "../../../components/Loading";
 
-const ProductForm = () => {
+const ProductForm = ({ isEdit, itemId }) => {
   const userId = useSelector((state) => state.auth.user._id);
   const [isLoading, setIsLoading] = useState(false);
   const token = useSelector((state) => state.auth.token);
@@ -60,7 +60,36 @@ const ProductForm = () => {
 
   useEffect(() => {
     getCategories();
+
+    if (isEdit) {
+      getProductForUpdate();
+    }
   }, []);
+
+  const getProductForUpdate = async () => {
+    return await fetch(`${API}/product/${itemId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((resp) => {
+        return resp.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setValues({
+          name: data.name,
+          description: data.description,
+          price: data.price,
+          category: data.category,
+          quantity: data.quantity,
+          sold: data.sold,
+          image: data.imagePath,
+          shipping: data.shipping,
+        });
+      });
+  };
 
   const addProduct = async (userId, token, product) => {
     return await fetch(`${API}/product/create/${userId}`, {
@@ -85,7 +114,9 @@ const ProductForm = () => {
 
   const handleChange = (name) => (event) => {
     const value = name === "image" ? event.target.files[0] : event.target.value;
-    formData.set(name, value);
+    if (!isEdit) {
+      formData.set(name, value);
+    }
     setValues({ ...values, [name]: value });
   };
 
@@ -130,10 +161,68 @@ const ProductForm = () => {
     });
   };
 
+  const editProduct = async (userId, token, editValue) => {
+    return await fetch(`${API}/product/${itemId}/${userId}`, {
+      method: "PUT",
+      headers: {
+        Accept: "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+      body: editValue,
+    })
+      .then((resp) => {
+        return resp.json();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const handleFormEdit = (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    const formData = new FormData();
+    formData.set("name", name);
+    formData.set("description", description);
+    formData.set("price", price);
+    formData.set("category", category);
+    formData.set("quantity", quantity);
+    formData.set("sold", sold);
+    formData.set("shipping", shipping);
+    if (image) {
+      formData.set("image", image);
+      formData.set("imagePath", image.name);
+    }
+
+    setValues({ ...values, error: "" });
+    editProduct(userId, token, formData).then((data) => {
+      if (data.error || data.errors) {
+        setValues({ ...values, error: data.error });
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+        setValues({
+          ...values,
+          name: "",
+          description: "",
+          price: "",
+          quantity: "",
+          sold: "",
+          image: "",
+          shipping: false,
+          createdProduct: data.name,
+          redirectToProfile: false,
+        });
+      }
+    });
+  };
+
   return (
     <Fragment>
       <div className="axil-dashboard-account">
-        <form className="account-details-form" onSubmit={handleFormSubmit}>
+        <form
+          className="account-details-form"
+          onSubmit={!isEdit ? handleFormSubmit : handleFormEdit}
+        >
           <div className="row">
             <div className="col-lg-6">
               <div className="form-group">
@@ -229,7 +318,7 @@ const ProductForm = () => {
                 />
               </div>
             </div>
-            
+
             <div className="col-lg-6">
               <div className="form-group mb--40">
                 <label> Shipping</label>

@@ -15,7 +15,7 @@ const BestSellerCard = ({ product }) => {
           </div>
           <div className="inner">
             <h5 className="title">
-              <Link to="/products/p1">{product.name}</Link>
+              <Link to={`/products/${product._id}`}>{product.name}</Link>
             </h5>
             <div className="product-price-variant">
               <span className="price current-price">
@@ -36,7 +36,7 @@ const BestSellerCard = ({ product }) => {
           </div>
         </div>
         <div className="thumbnail">
-          <Link to="/products/p1">
+          <Link to={`/products/${product._id}`}>
             <img
               data-sal="zoom-out"
               data-sal-delay="100"

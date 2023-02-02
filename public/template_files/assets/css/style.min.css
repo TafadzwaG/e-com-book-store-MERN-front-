@@ -11011,7 +11011,7 @@ body.open .closeMask {
 .axil-dashboard-order .table thead th:last-child {
   border-radius: 0 6px 6px 0;
   padding-right: 30px;
-  text-align: right;
+  /* text-align: right; */
 }
 @media only screen and (max-width: 1199px) {
   .axil-dashboard-order .table thead th {
@@ -16714,7 +16714,7 @@ body.open .closeMask {
   padding: 8px 15px;
   cursor: pointer;
   border-radius: 7px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .pagination .page-num:hover {
@@ -16724,7 +16724,33 @@ body.open .closeMask {
 
 .pagination .active {
   background-color: #3577f0;
+  color: #fff
 }
 .table-responsive{
   min-height: 510px !important;
+}
+
+
+.dashboard-action i {
+  background-color: transparent;
+  padding: 6px;
+  border-radius: 50%;
+  
+}
+.dashboard-action i:hover{
+  background-color: #3577f0;
+  padding: 6px;
+  border-radius: 50%;
+  transition: ease-in-out 2ms;
+}
+
+.dashboard-action i:hover:last-child{
+  background-color: red;
+  padding: 6px;
+  border-radius: 50%;
+  transition: ease-in-out 2ms;
+}
+
+.star-rating  span {
+  color : #ffc000
 }

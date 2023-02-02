@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import BackButton from "../../components/BackButton";
 import BreadcrumbArea from "../../components/BreadcrumbArea";
 import ButtonSimple from "../../components/ButtonSimple";
@@ -21,6 +22,7 @@ import WishlistTabContainer from "./components/WishlistTabContainer";
 import CategoryForm from "./forms/CategortyForm";
 import ProductForm from "./forms/ProductForm";
 
+
 const Dashboard = () => {
   const adminUser = useSelector((state) => state.auth.user);
 
@@ -28,6 +30,7 @@ const Dashboard = () => {
   const [create, setCreate] = useState(false);
   const [adverts, setAdverts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
 
   const handleCreate = () => {
     if (!create) {
@@ -62,10 +65,26 @@ const Dashboard = () => {
     return responseData.data;
   };
 
+  const getProducts = async () => {
+    const getProductsResponse = await fetch(`${API}/all-products`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const responseData = await getProductsResponse.json();
+
+    console.log("Products", responseData.data);
+    setProducts(responseData.data);
+  };
+
 
 
   useEffect(() => {
+    toast.info("Hello")
     getAdverts();
+    getProducts();
     getCategories()
       .then((data) => {
         setCategories(data);
@@ -77,6 +96,7 @@ const Dashboard = () => {
 
   return (
     <Fragment>
+      
       <Layout>
         <BreadcrumbArea location={"Dashboard"} title={"Admin Dashboard"} />
         <div className="axil-dashboard-area axil-section-gap">
@@ -102,7 +122,7 @@ const Dashboard = () => {
                   <div className="tab-content">
                     <DashboardTabContainer />
                     <UsersTabContainer />
-                    <ProductsTabContainer />
+                    <ProductsTabContainer  products={products}/>
                     <CategoriesTabContainer categories={categories} />
                     <TestimonialTabContainer />
                     <AdvertTabContainer />

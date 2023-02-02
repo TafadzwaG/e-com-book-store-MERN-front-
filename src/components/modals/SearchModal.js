@@ -17,7 +17,6 @@ const SearchModal = () => {
   const loadCategories = () => {
     getCategories()
       .then((ResponseData) => {
-        console.log("From Modal", ResponseData);
         setData({ ...data, categories: ResponseData });
       })
       .catch((err) => {
@@ -99,14 +98,16 @@ const SearchModal = () => {
           </div>
           <div className="card-body">
             <div className="search-result-header">
-              <h6 className="title">24 Result Found</h6>
+              <h6 className="title">{data.results.length} Result Found</h6>
               <a href="shop.html" className="view-all">
                 View All
               </a>
             </div>
             <div className="psearch-results">
-              <SearchItemCard />
-              <SearchItemCard />
+              {data.results &&
+                data.results.map((product) => (
+                  <SearchItemCard product={product} />
+                ))}
             </div>
           </div>
         </div>
