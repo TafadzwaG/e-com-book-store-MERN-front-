@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Rating from "../components/Rating";
 
 const NewArrivalCard = ({ product }) => {
   return (
@@ -23,21 +24,35 @@ const NewArrivalCard = ({ product }) => {
           <div className="inner">
             <div className="color-variant-wrapper">
               <ul className="color-variant">
-                <li className="color-extra-01 active">
-                  <span>
-                    <span className="color"></span>
-                  </span>
-                </li>
-                <li className="color-extra-02">
-                  <span>
-                    <span className="color"></span>
-                  </span>
-                </li>
-                <li className="color-extra-03">
-                  <span>
-                    <span className="color"></span>
-                  </span>
-                </li>
+              {product.comments ? (
+              <div
+                className="product-rating"
+                style={{
+                  display: "flex",
+                  marginBottom: "-10px",
+                }}
+              >
+                <span className="icon">
+                  <Rating rating={product.rating || 0} numReviews={2} />{" "}
+                </span>
+                <span className="rating-number">
+                  ({product.comments.length})
+                </span>
+              </div>
+            ) : (
+              <div
+                className="product-rating"
+                style={{
+                  display: "flex",
+                  marginBottom: "-10px",
+                }}
+              >
+                <span className="icon">
+                  <Rating rating={product.rating || 0} numReviews={2} />{" "}
+                </span>
+                <span className="rating-number">(0)</span>
+              </div>
+            )}
               </ul>
             </div>
             <h5 className="title">

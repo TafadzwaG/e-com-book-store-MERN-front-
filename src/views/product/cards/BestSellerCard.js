@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
+import Rating from "../components/Rating";
 
 const BestSellerCard = ({ product }) => {
   const params = useParams();
@@ -23,16 +24,35 @@ const BestSellerCard = ({ product }) => {
               </span>
               {/* <span className="price old-price">$49.99</span> */}
             </div>
-            <div className="product-rating">
-              <span className="icon">
-                <i className="fas fa-star"></i>
-                <i className="fas fa-star"></i>
-                <i className="fas fa-star"></i>
-                <i className="fas fa-star"></i>
-                <i className="fas fa-star"></i>
-              </span>
-              <span className="rating-number">(64)</span>
-            </div>
+            {product.comments ? (
+              <div
+                className="product-rating"
+                style={{
+                  display: "flex",
+                  marginBottom: "-10px",
+                }}
+              >
+                <span className="icon">
+                  <Rating rating={product.rating || 0} numReviews={2} />{" "}
+                </span>
+                <span className="rating-number">
+                  ({product.comments.length})
+                </span>
+              </div>
+            ) : (
+              <div
+                className="product-rating"
+                style={{
+                  display: "flex",
+                  marginBottom: "-10px",
+                }}
+              >
+                <span className="icon">
+                  <Rating rating={product.rating || 0} numReviews={2} />{" "}
+                </span>
+                <span className="rating-number">(0)</span>
+              </div>
+            )}
           </div>
         </div>
         <div className="thumbnail">
@@ -42,11 +62,11 @@ const BestSellerCard = ({ product }) => {
               data-sal-delay="100"
               data-sal-duration="800"
               loading="lazy"
-            //   src="/template_files/assets/images/product/furniture/product-19.png"
+              //   src="/template_files/assets/images/product/furniture/product-19.png"
               style={{
                 marginTop: "20px",
                 borderRadius: "50%",
-                width: "310px"
+                width: "310px",
               }}
               src={`http://localhost:8000/assets/${product.imagePath}`}
               alt="Product Images"

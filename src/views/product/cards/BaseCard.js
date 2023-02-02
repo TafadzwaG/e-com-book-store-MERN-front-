@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import ProductQuickView from "../../../components/modals/ProductQuickView";
 import { cartActions } from "../../../redux-store/cart-store";
 import { addToCart } from "../../../services/api-services";
+import Rating from "../components/Rating";
 
 const BaseCard = ({ product }) => {
   const dispatch = useDispatch();
@@ -81,6 +82,37 @@ const BaseCard = ({ product }) => {
                 <h5 className="title">
                   <Link to={`/products/${product._id}`}>{product.name}</Link>
                 </h5>
+                {product.comments ? (
+                  <div
+                    className="product-rating"
+                    style={{
+                      display: "flex",
+                      marginBottom: "-10px",
+                      
+                    }}
+                  >
+                    <span className="icon">
+                      <Rating rating={product.rating || 0} numReviews={2} />{" "}
+                    </span>
+                    <span className="rating-number">
+                      ({product.comments.length})
+                    </span>
+                  </div>
+                ) : (
+                  <div
+                    className="product-rating"
+                    style={{
+                      display: "flex",
+                      marginBottom: "-10px",
+                    }}
+                  >
+                    <span className="icon">
+                      <Rating rating={product.rating || 0} numReviews={2} />{" "}
+                    </span>
+                    <span className="rating-number">(0)</span>
+                  </div>
+                )}
+
                 <div className="product-price-variant">
                   <span className="price current-price">
                     R{product.price.toFixed(2)}
