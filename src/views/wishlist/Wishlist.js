@@ -1,8 +1,12 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
+import { useSelector } from "react-redux";
 import Layout from "../../core/Layout";
 import WishListItem from "./WishlistItem";
 
 const WishList = () => {
+  const wishlist = useSelector((state) => state.wishlist.wishlistItems);
+  useEffect(() => {}, [wishlist]);
+
   return (
     <Layout>
       <Fragment>
@@ -30,7 +34,10 @@ const WishList = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <WishListItem />
+                  {wishlist &&
+                    wishlist.map((item) => (
+                      <WishListItem key={item._id} item={item} />
+                    ))}
                 </tbody>
               </table>
             </div>

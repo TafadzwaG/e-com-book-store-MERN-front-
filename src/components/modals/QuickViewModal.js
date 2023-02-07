@@ -1,13 +1,34 @@
 import React, { Fragment } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { cartActions } from "../../redux-store/cart-store";
+import {
+  addToCart,
+  removeItemFromCart,
+} from "../../redux-store/cart-store/cart-actions";
 
 const QuickViewModal = () => {
-  const onChangeHandler = () => {};
+  const dispatch = useDispatch();
+  const userId = useSelector((state) => state.auth.userId);
+  const token = useSelector((state) => state.auth.token);
+
+  const removeItemHandler = (itemId, productId) => {
+    dispatch(removeItemFromCart(userId, productId, itemId, token));
+  };
+  const addItemHandler = (product) => {
+    dispatch(
+      addToCart(userId, product.productId, 1, token, {
+        _id: product._id,
+        name: product.name,
+        price: product.price,
+        imagePath: product.imagePath,
+      })
+    );
+  };
 
   const cartItems = useSelector((state) => state.cart.cartItems);
-
   const cartTotal = useSelector((state) => state.cart.cartTotal);
+
   return (
     <Fragment>
       <div className="cart-dropdown" id="cart-dropdown">
@@ -53,12 +74,25 @@ const QuickViewModal = () => {
                         {item.price}
                       </div>
                       <div className="pro-qty item-quantity">
+                        <span
+                          class="dec qtybtn"
+                          onClick={() =>
+                            removeItemHandler(item._id, item.productId)
+                          }
+                        >
+                          -
+                        </span>
                         <input
                           type="number"
                           className="quantity-input"
                           value={item.quantity}
-                          onChange={onChangeHandler}
                         />
+                        <span
+                          class="inc qtybtn"
+                          onClick={() => addItemHandler(item)}
+                        >
+                          +
+                        </span>
                       </div>
                     </div>
                   </li>

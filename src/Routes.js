@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter,
   Route,
@@ -26,10 +26,21 @@ import ForgotPassword from "./user/ForgetPassword";
 import Checkout from "./views/checkout/Checkout";
 import Account from "./views/account/Account";
 import Dashboard from "./views/dashboard/Dashboard";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchWishlistData } from "./redux-store/wishlist-store/wishlist-actions";
+
+let isInitial = true;
 
 const AppRoutes = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuth);
+
+  const userId = useSelector((state) => state.auth.userId);
+  const token = useSelector((state) => state.auth.token);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchWishlistData(userId, token));
+  }, [dispatch]);
 
   return (
     <BrowserRouter>

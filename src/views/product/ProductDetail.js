@@ -15,6 +15,8 @@ const ProductDetail = () => {
   const params = useParams();
   const productId = params.productId;
   const [product, setProduct] = useState({});
+
+  const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState("");
   const isComment = useSelector((state) => state.product.isCommented);
 
@@ -32,9 +34,20 @@ const ProductDetail = () => {
     );
 
     const responseData = await getSingleProductResponse.json();
-    console.log("Single", responseData);
+    console.log("single", responseData);
 
     return responseData;
+  };
+
+  const addItemHandler = () => {
+    setQuantity(quantity + 1);
+  };
+
+  const removeItemHandler = () => {
+    if (quantity <= 1) {
+      return;
+    }
+    setQuantity(quantity - 1);
   };
 
   const init = () => {
@@ -182,7 +195,19 @@ const ProductDetail = () => {
                       <div className="product-action-wrapper d-flex-center">
                         {/* <!-- Start Quentity Action  --> */}
                         <div className="pro-qty">
-                          <input type="text" value="1" />
+                          <span
+                            class="dec qtybtn"
+                            onClick={() => removeItemHandler()}
+                          >
+                            -
+                          </span>
+                          <input type="text" value={quantity} readOnly />
+                          <span
+                            class="inc qtybtn"
+                            onClick={() => addItemHandler()}
+                          >
+                            +
+                          </span>
                         </div>
                         {/* <!-- End Quentity Action  --> */}
 
@@ -205,6 +230,7 @@ const ProductDetail = () => {
                             </a>
                           </li>
                         </ul>
+
                         {/* <!-- End Product Action  --> */}
                       </div>
                       {/* <!-- End Product Action Wrapper  --> */}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Loading from "../../../components/Loading";
 import { API } from "../../../config";
 import { productActions } from "../../../redux-store/products-store";
@@ -50,6 +51,7 @@ export default function Review({ productIdProp }) {
   };
 
   const onSubmitComment = (e) => {
+    toast.info("Comment Submited");
     e.preventDefault();
     setValues({ ...values, loading: true });
     if (!token) {

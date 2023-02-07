@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Fragment } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { API } from "../../../config";
 import Rating from "./Rating";
+import { productActions } from "../../../redux-store/products-store";
 
 export default function UserReview({ productId }) {
-  
   const isComment = useSelector((state) => state.product.isCommented);
   const [comments, setComments] = useState([]);
+  const userId = useSelector((state) => state.auth.userId);
+  const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch()
 
   const getUserComment = async () => {
     const getProductReviews = await fetch(
@@ -22,6 +25,27 @@ export default function UserReview({ productId }) {
 
     const respData = await getProductReviews.json();
     setComments(respData.comments);
+  };
+
+  const deleteComment = async (commentId) => {
+    const deleteCommentResponse = await fetch(
+      `${API}/comment/delete/${commentId}/${userId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const responseData = await deleteCommentResponse.json();
+    console.log("deleComment", responseData);
+    
+    if(responseData){
+      dispatch(productActions.setIsComented(true))
+    }
+    return responseData;
   };
 
   useEffect(() => {
@@ -71,8 +95,23 @@ export default function UserReview({ productId }) {
                       <Rating rating={comment.stars} numReviews={2} />
                     </span>
                   </div>
-                  <div className="comment-text">
-                    <p>{comment.comment}</p>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      width: "100%",
+                    }}
+                  >
+                    <div className="comment-text">
+                      <p>{comment.comment}</p>
+                    </div>
+                    <i
+                      className="fa fa-trash"
+                      onClick={() => deleteComment(comment._id)}
+                      style={{
+                        cursor: "pointer",
+                      }}
+                    ></i>
                   </div>
                 </div>
               </div>

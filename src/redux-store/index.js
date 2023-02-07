@@ -16,6 +16,7 @@ import storage from "redux-persist/lib/storage";
 import { PersistGate } from "redux-persist/integration/react";
 import productSlice from "./products-store";
 import cartSlice from "./cart-store";
+import wishlistSlice from "./wishlist-store";
 
 const persistConfig = {
   key: "root",
@@ -28,7 +29,8 @@ const rootReducer = combineReducers({
   auth: authSlice.reducer,
   category: categorySlice.reducer,
   product: productSlice.reducer,
-  cart: cartSlice.reducer
+  cart: cartSlice.reducer,
+  wishlist: wishlistSlice.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

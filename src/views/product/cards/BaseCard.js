@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ProductQuickView from "../../../components/modals/ProductQuickView";
 import { cartActions } from "../../../redux-store/cart-store";
-import { addToCart } from "../../../services/api-services";
 import Rating from "../components/Rating";
 
+import { addToWishList } from "../../../redux-store/wishlist-store/wishlist-actions";
+import { addToCart } from "../../../redux-store/cart-store/cart-actions";
 const BaseCard = ({ product }) => {
   const dispatch = useDispatch();
 
@@ -14,24 +15,25 @@ const BaseCard = ({ product }) => {
 
   const addToCartHandler = () => {
     dispatch(
-      cartActions.addToCart({
+      addToCart(userId, product._id, 1, token, {
         _id: product._id,
+        productId: product._id,
         name: product.name,
         price: product.price,
         imagePath: product.imagePath,
       })
     );
-
-    //Add to Cart on API
-    if (token !== null) {
-      addToCart(product._id, 1, userId, token)
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+  };
+  const handleAddToWishlist = () => {
+    dispatch(
+      addToWishList(userId, product._id, token, {
+        _id: product._id,
+        productId: product._id,
+        price: product.price,
+        name: product.name,
+        imagePath: product.imagePath,
+      })
+    );
   };
 
   return (
@@ -70,7 +72,10 @@ const BaseCard = ({ product }) => {
                     </a>
                   </li>
                   <li className="wishlist">
-                    <a style={{ cursor: "pointer" }}>
+                    <a
+                      style={{ cursor: "pointer" }}
+                      onClick={handleAddToWishlist}
+                    >
                       <i className="far fa-heart"></i>
                     </a>
                   </li>
@@ -88,7 +93,6 @@ const BaseCard = ({ product }) => {
                     style={{
                       display: "flex",
                       marginBottom: "-10px",
-                      
                     }}
                   >
                     <span className="icon">
