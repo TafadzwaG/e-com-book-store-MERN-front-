@@ -1,18 +1,19 @@
-import React, { Fragment, useState } from "react";
+import React from "react";
+import { Fragment } from "react";
 import { useEffect } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
 import BreadcrumbArea from "../components/BreadcrumbArea";
-import { API } from "../config";
 import Layout from "../core/Layout";
-import { productActions } from "../redux-store/products-store";
-import { getFiltereredProducts } from "../services/api-services";
 import BaseCard from "../views/product/cards/BaseCard";
 import FilterByCategory from "./components/FilterByCategory";
 import RadioBox from "./components/RadioBox";
 import { prices } from "./FixedPrices";
+import { getFiltereredProducts } from "../services/api-services";
+import { productActions } from "../redux-store/products-store";
 
-const Shop = () => {
+export default function ShopByCategory() {
   const [toggleSi, setToggleSi] = useState(true);
   const [togglePri, setTogglePri] = useState(true);
   const [myFilters, setMyFilters] = useState({
@@ -25,6 +26,8 @@ const Shop = () => {
   const [limit, setLimit] = useState(2);
   const [skip, setSkip] = useState(0);
   const [size, setSize] = useState(0);
+
+  const params = useParams();
 
   const dispatch = useDispatch();
 
@@ -44,26 +47,28 @@ const Shop = () => {
     }
   };
 
-  const init = () => {
-   
-  };
-
   useEffect(() => {
-    loadFilteredResults(skip, limit, myFilters.filters);
-  }, [dispatch]);
+    handleFilters([params.categoryId], "category");
+    // loadFilteredResults(skip, limit, myFilters.filters);
+  }, [params]);
 
   const handleFilters = (filters, filterBy) => {
     const newFilters = { ...myFilters };
     newFilters.filters[filterBy] = filters;
 
+    newFilters.filters.category = [params.categoryId];
+    myFilters.filters.category = [params.categoryId];
+
     if (filterBy == "price") {
       let priceValues = handlePrice(filters);
       newFilters.filters[filterBy] = priceValues;
     }
+    if (filterBy == "category") {
+      newFilters.filters[filterBy] = [params.categoryId];
+    }
 
     loadFilteredResults(myFilters.filters);
     console.log("new", newFilters, "myFilters", myFilters.filters);
-
     setMyFilters(newFilters);
   };
 
@@ -80,9 +85,8 @@ const Shop = () => {
   };
 
   const products = useSelector((state) => state.product.products);
-
   const loadFilteredResults = (newFilters) => {
-    console.log("shopp", newFilters)
+    console.log("mfsbjk", newFilters);
     getFiltereredProducts(skip, limit, newFilters)
       .then((data) => {
         console.log("Filtered Rezo", data.data);
@@ -103,34 +107,14 @@ const Shop = () => {
         );
       });
   };
-  const loadMore = (newFilters) => {
-    let toSkip = skip + limit;
-
-    getFiltereredProducts(toSkip, limit, myFilters.filters)
-      .then((data) => {
-        dispatch(
-          productActions.setProducts({
-            products: [...products, ...data.data],
-          })
-        );
-
-        setSize(data.size);
-        setSkip(toSkip);
-      })
-      .catch((err) => {
-        console.log(err);
-        dispatch(
-          productActions.failedFetchProducts({
-            error: "Error whilst fetch products" || err,
-          })
-        );
-      });
-  };
 
   return (
     <Fragment>
       <Layout>
-        <BreadcrumbArea location={"Products"} title={"Explore All Products"} />
+        <BreadcrumbArea
+          location={"Products"}
+          title={`Explore All ${params.categoryName} Products`}
+        />
         <div className="axil-shop-area axil-section-gap bg-color-white">
           <div className="container">
             <div className="row">
@@ -141,11 +125,6 @@ const Shop = () => {
                       <i className="fas fa-times"></i>
                     </button>
                   </div>
-                  <FilterByCategory
-                    handleFilters={(filters) =>
-                      handleFilters(filters, "category")
-                    }
-                  />
 
                   <div
                     className={
@@ -211,9 +190,7 @@ const Shop = () => {
                       />
                     </div>
                   </div>
-                  <button className="axil-btn btn-bg-primary" >
-                    All Reset
-                  </button>
+                  <button className="axil-btn btn-bg-primary">All Reset</button>
                 </div>
                 {/* <!-- End .axil-shop-sidebar --> */}
               </div>
@@ -251,7 +228,7 @@ const Shop = () => {
                     ))}
                 </div>
                 <div className="text-center pt--20">
-                  {" "}
+                  {/* {" "}
                   {size > 0 && size >= limit && (
                     <a
                       className="axil-btn btn-bg-lighter btn-load-more"
@@ -260,16 +237,13 @@ const Shop = () => {
                     >
                       Load more
                     </a>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>
           </div>
-          {/* <!-- End .container --> */}
         </div>
       </Layout>
     </Fragment>
   );
-};
-
-export default Shop;
+}

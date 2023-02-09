@@ -22,7 +22,6 @@ import WishlistTabContainer from "./components/WishlistTabContainer";
 import CategoryForm from "./forms/CategortyForm";
 import ProductForm from "./forms/ProductForm";
 
-
 const Dashboard = () => {
   const adminUser = useSelector((state) => state.auth.user);
 
@@ -79,10 +78,7 @@ const Dashboard = () => {
     setProducts(responseData.data);
   };
 
-
-
   useEffect(() => {
-    toast.info("Hello")
     getAdverts();
     getProducts();
     getCategories()
@@ -96,12 +92,11 @@ const Dashboard = () => {
 
   return (
     <Fragment>
-      
       <Layout>
         <BreadcrumbArea location={"Dashboard"} title={"Admin Dashboard"} />
         <div className="axil-dashboard-area axil-section-gap">
           <div className="container">
-            <div className="axil-dashboard-warp"> 
+            <div className="axil-dashboard-warp">
               <div className="axil-dashboard-author">
                 <div className="media">
                   <div className="thumbnail">
@@ -122,7 +117,7 @@ const Dashboard = () => {
                   <div className="tab-content">
                     <DashboardTabContainer />
                     <UsersTabContainer />
-                    <ProductsTabContainer  products={products}/>
+                    <ProductsTabContainer products={products} />
                     <CategoriesTabContainer categories={categories} />
                     <TestimonialTabContainer />
                     <AdvertTabContainer />

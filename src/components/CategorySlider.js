@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { API } from "../config";
 import { categoryActions } from "../redux-store/categories-store";
 import Slider from "react-slick";
+import { Link } from "react-router-dom";
 
 const CategorySlider = () => {
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ const CategorySlider = () => {
     });
 
     const responseData = await getCategoriesResponse.json();
-    console.log(responseData.data)
+    console.log(responseData.data);
     return responseData.data;
   };
 
@@ -59,8 +60,9 @@ const CategorySlider = () => {
       <Slider {...settings}>
         {categoryItems &&
           categoryItems.map((category) => (
-            <div className="axil-categorie-area pt--30 bg-color-white"
-            key={category._id}
+            <div
+              className="axil-categorie-area pt--30 bg-color-white"
+              key={category._id}
             >
               <div className="container">
                 <div className="categrie-product-activation-2 categorie-product-two slick-layout-wrapper--15">
@@ -69,14 +71,17 @@ const CategorySlider = () => {
                     key={category._id}
                   >
                     <div className="categrie-product-2">
-                      <a href="#" style={{ minWidth: "300px" }}>
+                      <Link
+                        to={`/shop/${category._id}/${category.name}`}
+                        style={{ minWidth: "300px" }}
+                      >
                         <img
                           className="img-fluid"
                           src={`http://localhost:8000/assets/${category.imagePath}`}
                           alt="product categorie"
                         />
                         <h6 className="cat-title">{category.name}</h6>
-                      </a>
+                      </Link>
                     </div>
                     {/* <!-- End .categrie-product --> */}
                   </div>

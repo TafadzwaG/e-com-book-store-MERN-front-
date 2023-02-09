@@ -86,6 +86,7 @@ const QuickViewModal = () => {
                           type="number"
                           className="quantity-input"
                           value={item.quantity}
+                          readOnly
                         />
                         <span
                           class="inc qtybtn"

@@ -4,6 +4,7 @@ import * as yup from "yup";
 import { API } from "../../../config";
 import { useSelector } from "react-redux";
 import Loading from "../../../components/Loading";
+import { toast } from "react-toastify";
 
 const CategoryForm = ({ isEdit, itemId }) => {
   const userId = useSelector((state) => state.auth.user._id);
@@ -36,7 +37,10 @@ const CategoryForm = ({ isEdit, itemId }) => {
     if (isEdit) {
       getCategory();
     }
-  }, []);
+    if (success) {
+      toast.success(`Category updated successfully`);
+    }
+  }, [success]);
 
   const addCategory = async (userId, token, category) => {
     return await fetch(`${API}/category/create/${userId}`, {
@@ -127,7 +131,6 @@ const CategoryForm = ({ isEdit, itemId }) => {
       formData.set("imagePath", image.name);
     }
 
-
     setValues({ ...values, error: "" });
     editCategory(userId, token, formData).then((data) => {
       if (data.error || data.errors) {
@@ -165,28 +168,9 @@ const CategoryForm = ({ isEdit, itemId }) => {
       });
   };
 
-  const showSuccess = () => (
-    <div
-      className="alert alert-info"
-      style={{ display: success ? "" : "none", width: "400px" }}
-    >
-      New Category Added
-    </div>
-  );
-  const showUpdateSuccess = () => (
-    <div
-      className="alert alert-info"
-      style={{ display: success ? "" : "none", width: "400px" }}
-    >
-      Category Updated
-    </div>
-  );
-
   return (
     <Fragment>
       <div className="axil-dashboard-account">
-        {!isEdit ? showSuccess() : showUpdateSuccess()}
-
         <form
           className="account-details-form"
           onSubmit={!isEdit ? handleFormSubmit : handleFormEdit}

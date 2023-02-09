@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Loading from "../components/Loading";
 import { API } from "../config";
 import { authActions } from "../redux-store/auth-store";
@@ -35,6 +36,7 @@ const Signin = () => {
     } else {
       return;
     }
+   
   }, [redirectToHome]);
 
   const signin = (user) => {
@@ -64,23 +66,25 @@ const Signin = () => {
     setSigninValues({ ...signinValues, error: false });
     signin({ email, password }).then((data) => {
       if (data.error) {
+        toast.error(data.error || "There was an error")
         setSigninValues({
           ...signinValues,
           error: data.error,
           success: false,
         });
       } else {
-        console.log(data.user.role)
+        console.log(data.user.role);
         dispatch(
           authActions.setLogin({
             user: data.user,
             token: data.token,
             isAuth: true,
-            role: data.user.role
+            role: data.user.role,
           })
         );
 
         setRedirectToHome(true);
+        toast.success("User signed in successfully");
         setSigninValues({
           ...signinValues,
           name: "",
@@ -150,9 +154,9 @@ const Signin = () => {
             <div className="axil-signin-form">
               <h3 className="title">Sign in to eTrade.</h3>
               <p className="b2 mb--55">Enter your detail below</p>
-
+              {/* 
               {showSuccess()}
-              {showError()}
+              {showError()} */}
               <form className="singin-form">
                 <div className="form-group">
                   <label>Email</label>

@@ -28,6 +28,9 @@ import Account from "./views/account/Account";
 import Dashboard from "./views/dashboard/Dashboard";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchWishlistData } from "./redux-store/wishlist-store/wishlist-actions";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ShopByCategory from "./shop/ShopByCategory";
 
 let isInitial = true;
 
@@ -45,6 +48,8 @@ const AppRoutes = () => {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <ToastContainer />
+
       <Routes>
         <Route path="/" exact element={<Home />} />
         <Route path="/signin" exact element={<Signin />} />
@@ -59,6 +64,11 @@ const AppRoutes = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/account" element={<Account />} />
+        <Route
+          path="/shop/:categoryId/:categoryName"
+          exact
+          element={<ShopByCategory />}
+        />
         <Route
           path="/dashboard"
           element={isAuthenticated ? <Dashboard /> : <Navigate to="/signin" />}

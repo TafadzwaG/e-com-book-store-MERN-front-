@@ -14,18 +14,18 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart: (state, action) => {
-      const newItem = action.payload;
+      const newItem = action.payload.product;
       const existingItem = state.cartItems.find(
         (item) => item._id === newItem._id
       );
-      state.cartQuantity++;
+
       if (!existingItem) {
         state.cartItems.push({
           _id: newItem._id,
           productId: newItem._id,
           price: newItem.price,
           name: newItem.name,
-          quantity: 1,
+          quantity: action.payload.quantity,
           totalPrice: newItem.price,
           imagePath: newItem.imagePath,
         });
@@ -38,12 +38,13 @@ const cartSlice = createSlice({
         (total, item) => total + item.totalPrice,
         0
       );
+
+      state.cartQuantity = state.cartItems.length;
     },
 
     removeFromCart: (state, action) => {
       const id = action.payload;
       const existingItem = state.cartItems.find((item) => item._id === id);
-      state.cartQuantity--;
       if (existingItem.quantity === 1) {
         state.cartItems = state.cartItems.filter((item) => item._id !== id);
       } else {
@@ -55,6 +56,8 @@ const cartSlice = createSlice({
         (total, item) => total + item.totalPrice,
         0
       );
+
+      state.cartQuantity = state.cartItems.length;
     },
 
     setCartFromApi: (state, action) => {
@@ -73,7 +76,7 @@ const cartSlice = createSlice({
         (state.error = ""),
         (state.success = false),
         (state.DUMMY_ITEMS = []);
-        localStorage.clear()
+      localStorage.clear();
     },
   },
 });

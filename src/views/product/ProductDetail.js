@@ -10,15 +10,20 @@ import SellFeatures from "./components/SellFeatures";
 import UserReview from "./components/UserReview";
 import RelatedProducts from "./RelatedProducts";
 import { productActions } from "../../redux-store/products-store";
+import { addToWishList } from "../../redux-store/wishlist-store/wishlist-actions";
+import { addToCart } from "../../redux-store/cart-store/cart-actions";
 
 const ProductDetail = () => {
   const params = useParams();
   const productId = params.productId;
   const [product, setProduct] = useState({});
-
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState("");
+
+  // Selectors
   const isComment = useSelector((state) => state.product.isCommented);
+  const userId = useSelector((state) => state.auth.userId);
+  const token = useSelector((state) => state.auth.token);
 
   const dispatch = useDispatch();
 
@@ -58,6 +63,34 @@ const ProductDetail = () => {
       .catch((err) => {
         setError(err);
       });
+  };
+
+  const addToCartHandler = () => {
+    if (product) {
+      dispatch(
+        addToCart(userId, product._id, quantity, token, {
+          _id: product._id,
+          productId: product._id,
+          name: product.name,
+          price: product.price,
+          imagePath: product.imagePath,
+        })
+      );
+    }
+  };
+
+  const handleAddToWishlist = () => {
+    if (product) {
+      dispatch(
+        addToWishList(userId, product._id, token, {
+          _id: product._id,
+          productId: product._id,
+          price: product.price,
+          name: product.name,
+          imagePath: product.imagePath,
+        })
+      );
+    }
   };
 
   useEffect(() => {
@@ -144,10 +177,6 @@ const ProductDetail = () => {
                           <i className="fal fa-check"></i>Free delivery
                           available
                         </li>
-                        <li>
-                          <i className="fal fa-check"></i>Sales 30% Off Use
-                          Code: MOTIVE30
-                        </li>
                       </ul>
                       <p className="description">{product.description}</p>
 
@@ -215,7 +244,7 @@ const ProductDetail = () => {
                         <ul className="product-action d-flex-center mb--0">
                           <li className="add-to-cart">
                             <a
-                              href="cart.html"
+                              onClick={addToCartHandler}
                               className="axil-btn btn-bg-primary"
                             >
                               Add to Cart
@@ -223,7 +252,7 @@ const ProductDetail = () => {
                           </li>
                           <li className="wishlist">
                             <a
-                              href="wishlist.html"
+                              onClick={handleAddToWishlist}
                               className="axil-btn wishlist-btn"
                             >
                               <i className="far fa-heart"></i>

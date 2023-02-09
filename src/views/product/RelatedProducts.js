@@ -27,30 +27,31 @@ const RelatedProducts = ({ productId }) => {
 
   return (
     <Fragment>
-      <div className="axil-product-area bg-color-white axil-section-gap pb--0">
-        <div className="container">
-          <div className="product-area pb--80">
-            <div className="section-title-wrapper">
-              <span className="title-highlighter highlighter-primary">
-                {" "}
-                <i className="far fa-shopping-basket"></i> Related Products
-              </span>
-              <h2 className="title">Explore Related Products</h2>
-            </div>
-            <div className="explore-product-activation slick-layout-wrapper slick-layout-wrapper--15 axil-slick-arrow arrow-top-slide">
-              <div className="slick-single-layout">
-                <div className="row row--15">
-                  {relatedProducts &&
-                    relatedProducts.map((product) => (
+      {relatedProducts.length > 0 && (
+        <div className="axil-product-area bg-color-white axil-section-gap pb--0">
+          <div className="container">
+            <div className="product-area pb--80">
+              <div className="section-title-wrapper">
+                <span className="title-highlighter highlighter-primary">
+                  {" "}
+                  <i className="far fa-shopping-basket"></i> Related Products
+                </span>
+                <h2 className="title">Explore Related Products</h2>
+              </div>
+              <div className="explore-product-activation slick-layout-wrapper slick-layout-wrapper--15 axil-slick-arrow arrow-top-slide">
+                <div className="slick-single-layout">
+                  <div className="row row--15">
+                    {relatedProducts.map((product) => (
                       <BaseCard key={product._id} product={product} />
                     ))}
+                  </div>
                 </div>
+                {/* <!-- End .slick-single-layout --> */}
               </div>
-              {/* <!-- End .slick-single-layout --> */}
             </div>
           </div>
         </div>
-      </div>
+      )}
     </Fragment>
   );
 };

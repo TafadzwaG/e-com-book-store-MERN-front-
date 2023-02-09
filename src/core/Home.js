@@ -16,9 +16,10 @@ import WhyUsSection from "../sections/WhyUsSection";
 import PostSection from "../sections/PostSection";
 import AboutUsSection from "../sections/AboutUsSection";
 import CategorySlider from "../components/CategorySlider";
-import { getUserCart } from "../services/api-services";
 import { useDispatch, useSelector } from "react-redux";
 import { cartActions } from "../redux-store/cart-store";
+import { toast } from "react-toastify";
+import { fetchCartData } from "../redux-store/cart-store/cart-actions";
 
 const Home = () => {
   var testimonialSettings = {
@@ -36,22 +37,12 @@ const Home = () => {
   const dispatch = useDispatch();
 
   const init = () => {
-    getUserCart(userId, token)
-      .then((data) => {
-        console.log("User Cart", data);
-
-        dispatch(cartActions.setCartFromApi(data));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    dispatch(fetchCartData(userId, token));
   };
 
   useEffect(() => {
-    if (token !== null) {
-      init();
-    }
-  }, []);
+    init();
+  }, [dispatch]);
   return (
     <>
       <Layout>

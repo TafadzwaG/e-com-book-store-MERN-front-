@@ -1,9 +1,13 @@
+import { toast } from "react-toastify";
 import { API } from "../../config.js";
 import { cartActions } from "./index.js";
 
 export const addToCart = (userId, productId, quantity, token, product) => {
   return async (dispatch) => {
-    dispatch(cartActions.addToCart(product));
+    dispatch(cartActions.addToCart({
+      product: product,
+      quantity: quantity
+    }));
 
     const addToCartRequest = async () => {
       const response = await fetch(`${API}/cart/${userId}`, {
@@ -30,6 +34,7 @@ export const addToCart = (userId, productId, quantity, token, product) => {
     try {
       const cart = await addToCartRequest();
     } catch (error) {
+      toast.error(error);
       console.log(error);
     }
   };
@@ -62,7 +67,7 @@ export const removeItemFromCart = (userId, productId, itemId, token) => {
 
     try {
       const newCart = await removeItemRequest();
-      console.log("New Cart",newCart)
+      console.log("New Cart", newCart);
       dispatch(cartActions.setCartFromApi(newCart));
     } catch (error) {
       console.log(error);
@@ -85,6 +90,7 @@ export const fetchCartData = (userId, token) => {
         throw new Error("Could not Fetch Wishlist");
       }
       const responseData = await response.json();
+      console.log("User Cart", responseData);
       return responseData;
     };
 
