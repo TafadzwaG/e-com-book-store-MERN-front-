@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { addToCart } from "../../redux-store/cart-store/cart-actions";
 import { removeItemFromWishlist } from "../../redux-store/wishlist-store/wishlist-actions";
 
 const WishListItem = ({ item }) => {
@@ -10,6 +11,22 @@ const WishListItem = ({ item }) => {
 
   const removeItemHandler = () => {
     dispatch(removeItemFromWishlist(userId, item.productId, item._id, token));
+  };
+
+  const addToCartHandler = () => {
+    if (item) {
+      dispatch(
+        addToCart(userId, item.productId, 1, token, {
+          _id: item._id,
+          productId: item.productId,
+          name: item.name,
+          price: item.price,
+          imagePath: item.imagePath,
+        })
+      );
+
+      removeItemHandler();
+    }
   };
 
   return (
@@ -43,7 +60,15 @@ const WishListItem = ({ item }) => {
           In Stock
         </td>
         <td className="product-add-cart">
-          <a className="axil-btn btn-outline">Add to Cart</a>
+          <a
+            className="axil-btn btn-outline"
+            style={{
+              cursor: "pointer",
+            }}
+            onClick={addToCartHandler}
+          >
+            Add to Cart
+          </a>
         </td>
       </tr>
     </Fragment>

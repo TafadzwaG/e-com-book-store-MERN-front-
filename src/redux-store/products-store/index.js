@@ -7,7 +7,9 @@ const initialState = {
   bestSellers: [],
   newArrivals: [],
   randomProducts: [],
-  isCommented: false
+  isCommented: false,
+  openModal: true,
+  quickViewProduct: {},
 };
 
 const productSlice = createSlice({
@@ -42,16 +44,23 @@ const productSlice = createSlice({
       state.error = "";
     },
 
-
     setRandomProducts: (state, action) => {
-      state.randomProducts = action.payload.randomProducts
+      state.randomProducts = action.payload.randomProducts;
       state.isLoading = false;
       state.error = "";
     },
 
     setIsComented: (state, action) => {
-      state.isCommented = action.payload
-    }
+      state.isCommented = action.payload;
+    },
+
+    toggleOpenModal: (state, action) => {
+      state.openModal = !state.openModal;
+    },
+
+    setQuickViewProduct: (state, action) => {
+      state.quickViewProduct = action.payload;
+    },
   },
 });
 

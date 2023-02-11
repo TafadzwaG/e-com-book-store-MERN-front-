@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import {
   addToCart,
   removeItemFromCart,
+  removeSelectedItemFromCart,
 } from "../../redux-store/cart-store/cart-actions";
 
 const CartItem = ({ item }) => {
@@ -25,11 +26,18 @@ const CartItem = ({ item }) => {
   const removeItemHandler = (itemId) => {
     dispatch(removeItemFromCart(userId, item.productId, itemId, token));
   };
+
+  const removeSelectedItemHandler = (itemId, productId) => {
+    dispatch(removeSelectedItemFromCart(userId, productId, itemId, token));
+  };
   return (
     <Fragment>
       <tr>
         <td className="product-remove">
-          <a href="#" className="remove-wishlist">
+          <a
+            className="remove-wishlist"
+            onClick={() => removeSelectedItemHandler(item._id, item.productId)}
+          >
             <i className="fal fa-times"></i>
           </a>
         </td>

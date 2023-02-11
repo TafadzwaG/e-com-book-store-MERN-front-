@@ -5,7 +5,9 @@ import { cartActions } from "../../redux-store/cart-store";
 import {
   addToCart,
   removeItemFromCart,
+  removeSelectedItemFromCart,
 } from "../../redux-store/cart-store/cart-actions";
+import Rating from "../../views/product/components/Rating";
 
 const QuickViewModal = () => {
   const dispatch = useDispatch();
@@ -14,6 +16,10 @@ const QuickViewModal = () => {
 
   const removeItemHandler = (itemId, productId) => {
     dispatch(removeItemFromCart(userId, productId, itemId, token));
+  };
+
+  const removeSelectedItemHandler = (itemId, productId) => {
+    dispatch(removeSelectedItemFromCart(userId, productId, itemId, token));
   };
   const addItemHandler = (product) => {
     dispatch(
@@ -51,23 +57,18 @@ const QuickViewModal = () => {
                           alt="Commodo Blown Lamp"
                         />
                       </Link>
-                      <button className="close-btn">
+                      <button
+                        className="close-btn"
+                        onClick={() =>
+                          removeSelectedItemHandler(item._id, item.productId)
+                        }
+                      >
                         <i className="fas fa-times"></i>
                       </button>
                     </div>
                     <div className="item-content">
-                      <div className="product-rating">
-                        <span className="icon">
-                          <i className="fas fa-star"></i>
-                          <i className="fas fa-star"></i>
-                          <i className="fas fa-star"></i>
-                          <i className="fas fa-star"></i>
-                          <i className="fas fa-star"></i>
-                        </span>
-                        <span className="rating-number">(64)</span>
-                      </div>
                       <h3 className="item-title">
-                        <a href="single-product-3.html">{item.name}</a>
+                        <Link to={`/products/${item._id}`}>{item.name}</Link>
                       </h3>
                       <div className="item-price">
                         <span className="currency-symbol">R</span>

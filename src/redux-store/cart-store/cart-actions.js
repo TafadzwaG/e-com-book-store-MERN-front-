@@ -75,6 +75,41 @@ export const removeItemFromCart = (userId, productId, itemId, token) => {
   };
 };
 
+export const removeSelectedItemFromCart = (userId, productId, itemId, token) => {
+  return async (dispatch) => {
+    // dispatch(cartActions.removeFromCart(itemId));
+
+    const removeItemRequest = async () => {
+      const response = await fetch(
+        `${API}/cart/remove/${userId}?productId=${productId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("There was and error whilst deleting");
+      }
+
+      const responseData = await response.json();
+      return responseData;
+    };
+
+    try {
+      const newCart = await removeItemRequest();
+      console.log("New Cart", newCart);
+      dispatch(cartActions.setCartFromApi(newCart));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
 export const fetchCartData = (userId, token) => {
   return async (dispatch) => {
     const fetchData = async () => {

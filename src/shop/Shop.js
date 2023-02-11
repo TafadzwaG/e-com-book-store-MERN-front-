@@ -44,9 +44,7 @@ const Shop = () => {
     }
   };
 
-  const init = () => {
-   
-  };
+  const init = () => {};
 
   useEffect(() => {
     loadFilteredResults(skip, limit, myFilters.filters);
@@ -82,7 +80,7 @@ const Shop = () => {
   const products = useSelector((state) => state.product.products);
 
   const loadFilteredResults = (newFilters) => {
-    console.log("shopp", newFilters)
+    console.log("shopp", newFilters);
     getFiltereredProducts(skip, limit, newFilters)
       .then((data) => {
         console.log("Filtered Rezo", data.data);
@@ -211,9 +209,7 @@ const Shop = () => {
                       />
                     </div>
                   </div>
-                  <button className="axil-btn btn-bg-primary" >
-                    All Reset
-                  </button>
+                  <button className="axil-btn btn-bg-primary">All Reset</button>
                 </div>
                 {/* <!-- End .axil-shop-sidebar --> */}
               </div>
@@ -246,8 +242,8 @@ const Shop = () => {
                 <div className="row row--15">
                   {/* {JSON.stringify(myFilters)} */}
                   {products &&
-                    products.map((product) => (
-                      <BaseCard key={product._id} product={product} />
+                    products.map((product, index) => (
+                      <BaseCard key={index} product={product} />
                     ))}
                 </div>
                 <div className="text-center pt--20">

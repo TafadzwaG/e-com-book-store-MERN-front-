@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { cartActions } from "../redux-store/cart-store";
 import { toast } from "react-toastify";
 import { fetchCartData } from "../redux-store/cart-store/cart-actions";
+import { fetchWishlistData } from "../redux-store/wishlist-store/wishlist-actions";
 
 const Home = () => {
   var testimonialSettings = {
@@ -38,6 +39,7 @@ const Home = () => {
 
   const init = () => {
     dispatch(fetchCartData(userId, token));
+    dispatch(fetchWishlistData(userId, token))
   };
 
   useEffect(() => {

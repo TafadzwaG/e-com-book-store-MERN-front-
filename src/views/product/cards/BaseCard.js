@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ProductQuickView from "../../../components/modals/ProductQuickView";
@@ -7,6 +7,10 @@ import Rating from "../components/Rating";
 
 import { addToWishList } from "../../../redux-store/wishlist-store/wishlist-actions";
 import { addToCart } from "../../../redux-store/cart-store/cart-actions";
+import { useEffect } from "react";
+import { API } from "../../../config";
+import { toast } from "react-toastify";
+import { productActions } from "../../../redux-store/products-store";
 const BaseCard = ({ product }) => {
   const dispatch = useDispatch();
 
@@ -36,6 +40,17 @@ const BaseCard = ({ product }) => {
     );
   };
 
+  const quickView = () => {
+    dispatch(productActions.setQuickViewProduct(product));
+  };
+
+  const [quickviewProduct, setQuickviewProduct] = useState({});
+  const [showModal, setShowModal] = useState(false);
+ 
+
+  useEffect(() => {
+  }, []);
+
   return (
     <Fragment>
       {product._id && (
@@ -58,7 +73,7 @@ const BaseCard = ({ product }) => {
                 <ul className="cart-action">
                   <li className="quickview">
                     <a
-                      href="#"
+                      onClick={() => quickView()}
                       data-bs-toggle="modal"
                       data-bs-target="#quick-view-modal"
                       style={{ cursor: "pointer" }}
@@ -128,8 +143,7 @@ const BaseCard = ({ product }) => {
           </div>
         </div>
       )}
-
-      <ProductQuickView product={product} />
+      <ProductQuickView  />
     </Fragment>
   );
 };
